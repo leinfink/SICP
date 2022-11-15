@@ -4,4 +4,4 @@ I am using MIT Scheme (release 11.2). If you notice any mistakes, please feel fr
 
 I am reading the second edition, in this nicely typeset version: [SICP-PDF](https://github.com/sarabander/sicp-pdf).
 
-Current progress up to exercise: **1.9**
+Current progress up to exercise: **1.12**
