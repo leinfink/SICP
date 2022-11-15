@@ -182,4 +182,80 @@
         (else (A (- x 1) (A x (- y 1))))))
 
 (define (f n) (A 0 n)) ;; 2n
-(define (g n) (A 1 n)) ;; TODO
+
+(define (g n) (A 1 n)) ;; 2^n
+;; (y0: 0, y1: 2, y2: (* 2 2) = 4, y3: (* 2 4), y4= (* 2 8), ...)
+
+(define (h n) (A 2 n)) ;; 2^(2^n)
+;; (y0: 0, y1: 2, y2: (A 1 2) = 4, y3: (A 1 (2^2)) = 2^4, 8, y4: (A 1 (2^3)) = 2^8, ...)
+
+
+;; Fibonacci
+
+(define (fib-rec n) ;; tree-recursive process: num of steps grows exponentially, space linerarly
+  (cond ((= n 0) 0)
+        ((= n 1) 1)
+        (else (+ (fib-rec (- n 1))
+                 (fib-rec (- n 2))))))
+
+(define (fib-it n) ;; linear iterative process: num of steps grows linearly, space constant
+  (fib-iter 1 0 n))
+(define (fib-iter a b count)
+  (if (= count 0)
+      b
+      (fib-iter (+ a b) a (- count 1))))
+
+
+;; Example: Counting change
+;; writing a procedure that calculates how many different ways of changing x amount of money there are
+
+(define (count-change amount) (cc amount 5))
+(define (cc amount kinds-of-coins)
+  (cond ((= amount 0) 1) ;; no money counts as 1 way of changing it
+        ((or (< amount 0) (= kinds-of-coins 0)) 0) ;; neg money or no coin-kinds is 0 ways of changing it
+        (else (+ (cc amount
+                     (- kinds-of-coins 1))
+                 (cc (- amount
+                        (first-denomination
+                         kinds-of-coins))
+                     kinds-of-coins)))))
+(define (first-denomination kinds-of-coins)
+  (cond ((= kinds-of-coins 1) 1)
+        ((= kinds-of-coins 2) 5)
+        ((= kinds-of-coins 3) 10)
+        ((= kinds-of-coins 4) 25)
+        ((= kinds-of-coins 5) 50)))
+
+
+;; --- 1.11 ---
+
+(define (f11-rec n)
+  (if (< n 3)
+      n
+      (+ (f11-rec (- n 1)) (* 2 (f11-rec (- n 2))) (* 3 (f11-rec (- n 3))))))
+
+(define (f11-iter n)
+  (define (iter i prev1 prev2 prev3)
+    (if (= i (+ n 1))
+        prev1
+        (iter (+ i 1)
+              (if (< i 3)
+                  i
+                  (+ prev1
+                     (* 2 prev2)
+                     (* 3 prev3)))
+              prev1
+              prev2)))
+  (iter 0 0 0 0))
+
+
+;; --- 1.12 ---
+
+(define (pascal-triangle-element h x) ; h: height, x: steps from left
+  (if (or (= x 1) (= x h))
+      1
+      (+ (pascal-triangle-element (- h 1) (- x 1))
+         (pascal-triangle-element (- h 1) x))))
+
+
+;; --- 1.13 ---
