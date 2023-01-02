@@ -259,3 +259,50 @@
 
 
 ;; --- 1.13 ---
+
+;; --- 1.14 ---
+
+;; --- 1.15 ---
+
+(define (cube x) (* x x x))
+(define (p x)
+  (display "hi")
+  (- (* 3 x) (* 4 (cube x))))
+(define (sine angle)
+  (if (not (> (abs angle) 0.1))
+      angle
+      (p (sine (/ angle 3.0)))))
+
+;; a: p is applied 5 times when (sine 12.15) is evaluated.
+;; b: ...
+
+
+;; Exponentiation
+
+(define (expt-rec b n) ;; O(n) steps, O(n) space
+  (if (= n 0)
+      1
+      (* b (expt-rec b (- n 1)))))
+
+(define (expt-iter b n) ;; O(n) steps, O(1) space
+  (define (iter counter product)
+    (if (= counter 0)
+        product
+        (iter (- counter 1)
+              (* b product))))
+  (iter n 1))
+
+(define (even? n)
+  (= (remainder n 2) 0))
+
+(define (fast-expt b n) ;; O(log n)
+  (cond ((= n 0) 1)
+        ((even? n) (square (fast-expt b (/ n 2))))
+        (else (* b (fast-expt b (- n 1))))))
+
+;; --- 1.16 ---
+
+(define (fast-expt-iter b n)
+  (define (iter counter state)
+    (cond ((= counter 0) 1)
+          ((even? counter) (square ())))))

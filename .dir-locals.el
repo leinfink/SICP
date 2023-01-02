@@ -1,0 +1,11 @@
+((nil . ((org-structure-template-alist .
+                                       (("a" . "export ascii")
+                                        ("c" . "center")
+                                        ("C" . "comment")
+                                        ("e" . "example")
+                                        ("E" . "export")
+                                        ("h" . "export html")
+                                        ("l" . "export latex")
+                                        ("q" . "quote")
+                                        ("s" . "src scheme\n")
+                                        ("v" . "verse"))))))
