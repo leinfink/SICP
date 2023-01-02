@@ -16,7 +16,7 @@
 :END:
 
 ** Exercise 1.1
-#+begin_src scheme :exports both
+#+begin_src scheme
   10 ; 10
   (+ 5 3 4) ; 12
   (- 9 1) ; 8
@@ -110,7 +110,7 @@
 ** Exercise 1.4
 For positive /b/, the procedure uses addition, otherwise subtraction as its operator.
 
-#+begin_src scheme :exports both
+#+begin_src scheme
   (define (a-plus-abs-b a b)
     ((if (> b 0) + -) a b))
 #+end_src
@@ -119,7 +119,7 @@ For positive /b/, the procedure uses addition, otherwise subtraction as its oper
 : ;=> #<void>
 
 ** Exercise 1.5
-#+begin_src scheme :exports both
+#+begin_src scheme
   (define (p) (p))
 
   (define (test x y)
@@ -137,7 +137,7 @@ For positive /b/, the procedure uses addition, otherwise subtraction as its oper
 #+begin_src scheme :exports both
   (define (average x y)
     (/ (+ x y) 2))
-  
+
   (define (sqrt x)
     (define (improve guess)
       (average guess (/ x guess)))
@@ -151,14 +151,9 @@ For positive /b/, the procedure uses addition, otherwise subtraction as its oper
           (sqrt-iter (improve guess))))
 
     (sqrt-iter 1.0))
-  #+end_src
-
-  #+RESULTS:
-  : ;=> #<void>
-
-  #+begin_src scheme :exports both
-    (sqrt 9)
-  #+end_src
+  
+  (sqrt 9)
+#+end_src
 
   #+RESULTS:
   : ;=> 3.00009155413138
@@ -170,10 +165,10 @@ For positive /b/, the procedure uses addition, otherwise subtraction as its oper
   #+RESULTS:
   : ;=> 0.0017011851721075596
 
-  Quite nice, but not perfect yet!
+  Quite nice, but not perfect yet, for instance for small numbers.
 
 ** Exercise 1.6
-#+begin_src scheme :exports both
+#+begin_src scheme
   (define (new-if predicate then-clause else-clause)
     (cond (predicate then-clause)
           (else else-clause)))
@@ -200,12 +195,7 @@ Because =new-if= is not a special form (unlike =if=), all the arguments get eval
            (sqrt-iter (improve guess) guess)))
 
      (sqrt-iter 1.0 2.0)) ; 2.0 just so the first "change" is 1
-#+end_src
 
-#+RESULTS:
-: ;=> #<void>
-
-#+begin_src scheme :exports both
   (square (better-sqrt 0.001))
 #+end_src
 
@@ -234,12 +224,7 @@ Better!
           (iter (improve guess))))
 
     (iter 1.0))
-#+end_src
 
-#+RESULTS:
-: ;=> #<void>
-
-#+begin_src scheme :exports both
   (cbrt 27)
 #+end_src
 
