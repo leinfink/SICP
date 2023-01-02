@@ -1,4 +1,4 @@
--*- mode: org; -*-
+-*- mode: elisp -*-
 #+TITLE: Structure and Interpretation of Computer Programs
 #+STARTUP: nohideblocks
 
