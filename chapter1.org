@@ -10,9 +10,9 @@
 : ;=> 
 
 
-* Chapter 1
+* Chapter 1.1
 :PROPERTIES:
-:header-args:scheme: :session *sicp* :post commentify(*this*) 
+:header-args:scheme: :session *sicp1* :post commentify(*this*) 
 :END:
 
 ** Exercise 1.1
@@ -165,7 +165,7 @@ For positive /b/, the procedure uses addition, otherwise subtraction as its oper
   #+RESULTS:
   : ;=> 0.0017011851721075596
 
-  Quite nice, but not perfect yet, for instance for small numbers.
+  Quite nice, but not yet perfect for small numbers.
 
 ** Exercise 1.6
 #+begin_src scheme
@@ -232,3 +232,87 @@ Better!
 : ;=> 3.0000005410641766
 
 Yay!
+
+* Chapter 1.2
+:PROPERTIES:
+:header-args:scheme: :session *sicp2* :post commentify(*this*) 
+:END:
+** Recursive and Iterative Processes
+#+begin_src scheme
+  (define (factorial-recursive n)
+    (if (= n 1)
+        1
+        (* n (factorial-recursive (- n 1)))))
+
+  (define (factorial-iterative n)
+    (define (iter product counter)
+      (if (> counter n)
+          product
+          (iter (* counter product)
+                (+ counter 1))))
+    (iter 1 1))
+#+end_src
+
+#+RESULTS:
+: ;=> #<void>
+
+** Exercise 1.9
+Recursive:
+
+#+begin_src scheme :session none :exports both
+  (define (+ a b)
+    (if (= a 0) b (1+ (+ (1- a) b))))
+  
+  (+ 2 3)
+#+end_src
+
+#+RESULTS:
+: ;=> 5
+
+Iterative:
+
+#+begin_src scheme :session none :exports both
+    (define (+ a b)
+      (if (= a 0) b (+ (1- a) (1+ b))))
+
+    (+ 2 3)
+#+end_src
+
+#+RESULTS:
+: ;=> 5
+
+** Exercise 1.10
+#+begin_src scheme
+  (define (A x y)
+    (cond ((= y 0) 0)
+          ((= x 0) (* 2 y))
+          ((= y 1) 2)
+          (else (A (- x 1) (A x (- y 1))))))
+#+end_src
+
+- 2n
+#+begin_src scheme
+(define (f n) (A 0 n))
+#+end_src
+
+- 2^n
+  y0: 0
+  y1: 2
+  y2: (* 2 2) = 4
+  y3: (* 2 4)
+  y4: (* 2 8)
+  ...
+#+begin_src scheme
+(define (g n) (A 1 n))
+#+end_src
+
+- 2^(2^n)
+  y0: 0
+  y1: 2
+  y2: (A 1 2) = 4
+  y3: (A 1 (2^2)) = 2^4
+  y4: (A 1 (2^3)) = 2^8
+  ...
+#+begin_src scheme
+  (define (h n) (A 2 n))
+#+end_src
