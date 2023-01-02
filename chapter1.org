@@ -44,11 +44,13 @@
 : ;=> #f
 
 #+begin_src scheme :exports both
-  (if (and (> b a) (< b (* a b))))
+  (if (and (> b a) (< b (* a b)))
+      b
+      a)
 #+end_src
 
 #+RESULTS:
-: ;=> 
+: ;=> 4
 
 #+begin_src scheme :exports both
   (cond ((= a 4) 6)
