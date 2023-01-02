@@ -8,4 +8,5 @@
                                         ("l" . "export latex")
                                         ("q" . "quote")
                                         ("s" . "src scheme\n")
-                                        ("v" . "verse"))))))
+                                        ("v" . "verse")))
+         (org-confirm-babel-evaluate . nil))))
