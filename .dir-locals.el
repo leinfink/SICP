@@ -1,12 +1,3 @@
-((nil . ((org-structure-template-alist .
-                                       (("a" . "export ascii")
-                                        ("c" . "center")
-                                        ("C" . "comment")
-                                        ("e" . "example")
-                                        ("E" . "export")
-                                        ("h" . "export html")
-                                        ("l" . "export latex")
-                                        ("q" . "quote")
-                                        ("s" . "src scheme :exports both \n")
-                                        ("v" . "verse")))
-         (org-confirm-babel-evaluate . nil))))
+((nil .
+      ((org-structure-template-alist .(("s" . "src scheme :exports both \n")))
+       (org-confirm-babel-evaluate . nil))))
