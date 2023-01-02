@@ -7,6 +7,6 @@
                                         ("h" . "export html")
                                         ("l" . "export latex")
                                         ("q" . "quote")
-                                        ("s" . "src scheme\n")
+                                        ("s" . "src scheme :exports both \n")
                                         ("v" . "verse")))
          (org-confirm-babel-evaluate . nil))))
