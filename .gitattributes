@@ -1,2 +1,1 @@
-*.org linguist-language=Scheme
 .dir-locals.el -linguist-detectable
