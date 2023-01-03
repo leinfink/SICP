@@ -423,7 +423,7 @@ Writing a procedure that calculates how many different ways there are of changin
 
 ** TODO Exercise 1.14
 
-** Exercise 1.5
+** Exercise 1.15
 
 #+begin_src scheme :exports both :results output
   (define (cube x) (* x x x))
