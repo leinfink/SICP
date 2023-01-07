@@ -9,13 +9,58 @@
 #+RESULTS: commentify
 : ;=> 
 
+/Attribution:/ Harold Abelson and Gerald Jay Sussman with Julie Sussman, foreword by Alan J. Perlis, ©1996 by The Massachusetts Institute of Technology, licensed under the Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0). Notes, (modified or adjusted) excerpts, and exercises by @leinfink.
 
-* Chapter 1.1
+* Chapter 1.1 The Elements of Programming
 :PROPERTIES:
 :header-args:scheme: :session *sicp1* :post commentify(*this*) 
 :END:
+- primitive expressions
+- means of combination
+- means of abstraction
 
-** Exercise 1.1
+- procedures
+- data
+  
+** 1.1.1 Expressions
+- /primitive expressions/ can get combined into combinations with operators and operands
+- the value of a combination is obtained by /applying/ the procedure that is the value of the operator  to the arguments that are the values of the operands
+- Lisp: /prefix notation/, allows for an aribtrary number of arguments and for easy nesting
+  
+** 1.1.2 Naming and the Environment
+- /names/ identify /variables/ whose /value/ is a computational object
+- these associations are stored in the /environment/
+  
+** 1.1.3 Evaluating Combinations
+- general evaluation rule (for combinations) :: 1. /Evaluate/ the subexpressions of the combination. 2. /Apply/ the procedure that is the value of the leftmost subexpression (the operator) to the arguments that are the values of the other subexpression.
+  - recursive, tree accumulation
+- values of primitive expressions:
+  - numerals: the number they name
+  - built-in operators: the respective machine instruction sequences
+  - other names: the objects associated with the names in the environment
+- special forms :: (combined) expressions that have special evaluation rules
+  - e.g. =(define)= does not apply a procedure to its arguments, but associates a variable with a value
+    
+** 1.1.4 Compound Procedures
+- procedure definitions :: associating names (in the corresponding environment) with compound procedures
+- general form of a procedure definition (in Scheme):
+  - =(define (<name> <formal parameters>) <body>)=
+  
+** 1.1.5 The Substitution Model for Procedure Application
+- application rule for primitive procedures: built into the interpreter
+- /apply/ / application rule for compound procedures :: to apply a compound procedure to arguments, evaluate the body of the procedure with each formal parameter replaced by the corresponding argument
+  - so-called /substitution model/ for procedure application
+  - that is, a simplified /model/, not usually literally what happens inside an interpreter
+  - for instance, instead of literally replacing the formal parameters with the arguments, a /local environment/ is used
+- applicative-order evaluation :: evaluate first the operator and operands, the apply the resulting procedure to the resulting arguments
+- normal-order evaluation :: evaluate the operator, but don't immediately evaluate the operands. instead, substitute operand expressions for parameters, then evaluate operators as needed until you reach expressions involving only primitive operators, only then evaluate the operands
+- Lisp uses applicative-order evaluation: simpler, avoids multiple evalutions, but has some limitations (e.g. for "infinite" /streams/)
+
+** 1.1.6 Conditional Expressions and Predicates
+- /case analysis/ in Lisp: =cond=
+- predicates :: procedures that return true or false, expressions that evaluate to true or false
+    
+*** Exercise 1.1
 #+begin_src scheme
   10 ; 10
   (+ 5 3 4) ; 12
@@ -78,7 +123,7 @@
 #+RESULTS:
 : ;=> 16
 
-** Exercise 1.2
+*** Exercise 1.2
 #+begin_src scheme :exports both
   (/ (+ 5 4 (- 2 (- 3 (+ 6 (/ 4 5)))))
      (/ 3 (- 6 2) (- 2 7)))
@@ -87,7 +132,7 @@
 #+RESULTS:
 : ;=> -296/3
 
-** Exercise 1.3
+*** Exercise 1.3
 #+begin_src scheme :exports both
   (define (square a)
     (* a a))
@@ -107,7 +152,7 @@
 #+RESULTS:
 : ;=> 25
 
-** Exercise 1.4
+*** Exercise 1.4
 For positive /b/, the procedure uses addition, otherwise subtraction as its operator.
 
 #+begin_src scheme
@@ -118,7 +163,7 @@ For positive /b/, the procedure uses addition, otherwise subtraction as its oper
 #+RESULTS:
 : ;=> #<void>
 
-** Exercise 1.5
+*** Exercise 1.5
 #+begin_src scheme
   (define (p) (p))
 
@@ -133,7 +178,9 @@ For positive /b/, the procedure uses addition, otherwise subtraction as its oper
 
 =(test 0 (p))= would loop indefinitely in applicative-order evaluation (as in Scheme), because the argument gets evaluated when the function is called, not only once it's used in the body. In normal-oder evaluation, y would never get evaluated because the if-condition is true. =test= would return 0.
 
-** Example: Square Roots using Newton's Method
+** 1.1.7 Example: Square Roots using Newton's Method
+Iteration can be accomplished simply using the ability to call a procedure.
+
 #+begin_src scheme :exports both
   (define (average x y)
     (/ (+ x y) 2))
@@ -167,7 +214,7 @@ For positive /b/, the procedure uses addition, otherwise subtraction as its oper
 
   Quite nice, but not yet perfect for small numbers.
 
-** Exercise 1.6
+*** Exercise 1.6
 #+begin_src scheme
   (define (new-if predicate then-clause else-clause)
     (cond (predicate then-clause)
@@ -179,7 +226,7 @@ For positive /b/, the procedure uses addition, otherwise subtraction as its oper
 
 Because =new-if= is not a special form (unlike =if=), all the arguments get evaluated, so =sqrt-iter= would get called indefinitely if it used =new-if= instead of =if=.
 
-** Exercise 1.7
+*** Exercise 1.7
 #+begin_src scheme :exports both
   (define (better-sqrt x)
      (define (improve guess)
@@ -204,7 +251,7 @@ Because =new-if= is not a special form (unlike =if=), all the arguments get eval
 
 Better!
 
-** Exercise 1.8
+*** Exercise 1.8
 #+begin_src scheme :exports both
   (define (cube a)
     (* a a a))
@@ -233,6 +280,13 @@ Better!
 
 Yay!
 
+** 1.1.8 Procedures as Black-Box Abstractions
+- local names :: the names of the procedure's formal parameters should not matter to the user of the procedure
+- bound variable :: a formal parameter of a procedure, have the body of the procedure as their /scope/
+- free variable :: a variable that is not bound by the procedure definition
+- /block structure/ :: nesting of definitions within definitions to hide them from external use
+- lexical scoping :: free variables in a procedure refer to bindings made by enclosing procedure definitions -> they get looked up in the environment in which the procedure was defined (not in the environment in which it was called, as in dynamic scoping)
+  
 * Chapter 1.2
 :PROPERTIES:
 :header-args:scheme: :session *sicp2* :post commentify(*this*) 
