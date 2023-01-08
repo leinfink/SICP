@@ -304,6 +304,7 @@ Yay!
           product
           (iter (* counter product)
                 (+ counter 1))))
+    
     (iter 1 1))
 #+end_src
 
@@ -322,16 +323,16 @@ Yay!
 Generates a /recursive process/ for addition in terms of =inc= and =dec=:
 
 #+begin_src scheme :session none :exports both
-      (define (inc a) (+ a 1))
+  (define (inc a) (+ a 1))
 
-      (define (dec a) (- a 1))
+  (define (dec a) (- a 1))
 
-      (define (plus a b)
-        (if (= a 0)
-            b
-            (inc (plus (dec a) b))))
+  (define (plus a b)
+    (if (= a 0)
+        b
+        (inc (plus (dec a) b))))
 
-      (plus 2 3)
+  (plus 2 3)
 #+end_src
 
 #+RESULTS:
@@ -361,7 +362,9 @@ Generates an /iterative process/ for addition in terms of =inc= and =dec=:
     (cond ((= y 0) 0)
           ((= x 0) (* 2 y))
           ((= y 1) 2)
-          (else (A (- x 1) (A x (- y 1))))))
+          (else (A (- x 1)
+                   (A x (- y 1))))))
+
 #+end_src
 
 #+RESULTS:
@@ -377,17 +380,15 @@ Generates an /iterative process/ for addition in terms of =inc= and =dec=:
 
 - 2^n:
   
-  (y0: 0,  y1: 2,  y2: (* 2 2) = 4,  y3: (* 2 4),  y4: (* 2 8),  ...)
 #+begin_src scheme
   (define (g n) (A 1 n))
 #+end_src
 
 #+RESULTS:
-: ;=> #<void>
+: ;=> 65536
 
 - 2^(2^n):
   
-  (y0: 0,  y1: 2,  y2: (A 1 2) = 4,  y3: (A 1 (2^2)) = 2^4,  y4: (A 1 (2^3)) = 2^8,  ...)
 #+begin_src scheme
   (define (h n) (A 2 n))
 #+end_src
