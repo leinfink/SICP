@@ -11,10 +11,11 @@
 
 /Attribution:/ Harold Abelson and Gerald Jay Sussman with Julie Sussman, foreword by Alan J. Perlis, ©1996 by The Massachusetts Institute of Technology, licensed under the Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0). Notes, (modified or adjusted) excerpts, and exercises by @leinfink.
 
-* Chapter 1.1 The Elements of Programming
+* Chapter 1
 :PROPERTIES:
 :header-args:scheme: :session *sicp1* :post commentify(*this*) 
 :END:
+** Chapter 1.1 The Elements of Programming
 - primitive expressions
 - means of combination
 - means of abstraction
@@ -22,16 +23,16 @@
 - procedures
 - data
   
-** 1.1.1 Expressions
+*** 1.1.1 Expressions
 - /primitive expressions/ can get combined into combinations with operators and operands
 - the value of a combination is obtained by /applying/ the procedure that is the value of the operator  to the arguments that are the values of the operands
 - Lisp: /prefix notation/, allows for an aribtrary number of arguments and for easy nesting
   
-** 1.1.2 Naming and the Environment
+*** 1.1.2 Naming and the Environment
 - /names/ identify /variables/ whose /value/ is a computational object
 - these associations are stored in the /environment/
   
-** 1.1.3 Evaluating Combinations
+*** 1.1.3 Evaluating Combinations
 - general evaluation rule (for combinations) :: 1. /Evaluate/ the subexpressions of the combination. 2. /Apply/ the procedure that is the value of the leftmost subexpression (the operator) to the arguments that are the values of the other subexpression.
   - recursive, tree accumulation
 - values of primitive expressions:
@@ -41,12 +42,12 @@
 - special forms :: (combined) expressions that have special evaluation rules
   - e.g. =(define)= does not apply a procedure to its arguments, but associates a variable with a value
     
-** 1.1.4 Compound Procedures
+*** 1.1.4 Compound Procedures
 - procedure definitions :: associating names (in the corresponding environment) with compound procedures
 - general form of a procedure definition (in Scheme):
   - =(define (<name> <formal parameters>) <body>)=
   
-** 1.1.5 The Substitution Model for Procedure Application
+*** 1.1.5 The Substitution Model for Procedure Application
 - application rule for primitive procedures: built into the interpreter
 - /apply/ / application rule for compound procedures :: to apply a compound procedure to arguments, evaluate the body of the procedure with each formal parameter replaced by the corresponding argument
   - so-called /substitution model/ for procedure application
@@ -56,11 +57,11 @@
 - normal-order evaluation :: evaluate the operator, but don't immediately evaluate the operands. instead, substitute operand expressions for parameters, then evaluate operators as needed until you reach expressions involving only primitive operators, only then evaluate the operands
 - Lisp uses applicative-order evaluation: simpler, avoids multiple evalutions, but has some limitations (e.g. for "infinite" /streams/)
 
-** 1.1.6 Conditional Expressions and Predicates
+*** 1.1.6 Conditional Expressions and Predicates
 - /case analysis/ in Lisp: =cond=
 - predicates :: procedures that return true or false, expressions that evaluate to true or false
     
-*** DONE Exercise 1.1
+**** DONE Exercise 1.1
 #+begin_src scheme
   10 ; 10
   (+ 5 3 4) ; 12
@@ -123,7 +124,7 @@
 #+RESULTS:
 : ;=> 16
 
-*** DONE Exercise 1.2
+**** DONE Exercise 1.2
 #+begin_src scheme :exports both
   (/ (+ 5 4 (- 2 (- 3 (+ 6 (/ 4 5)))))
      (/ 3 (- 6 2) (- 2 7)))
@@ -132,7 +133,7 @@
 #+RESULTS:
 : ;=> -296/3
 
-*** DONE Exercise 1.3
+**** DONE Exercise 1.3
 #+begin_src scheme :exports both
   (define (square a)
     (* a a))
@@ -152,7 +153,7 @@
 #+RESULTS:
 : ;=> 25
 
-*** DONE Exercise 1.4
+**** DONE Exercise 1.4
 For positive /b/, the procedure uses addition, otherwise subtraction as its operator.
 
 #+begin_src scheme
@@ -163,7 +164,7 @@ For positive /b/, the procedure uses addition, otherwise subtraction as its oper
 #+RESULTS:
 : ;=> #<void>
 
-*** DONE Exercise 1.5
+**** DONE Exercise 1.5
 #+begin_src scheme
   (define (p) (p))
 
@@ -178,7 +179,7 @@ For positive /b/, the procedure uses addition, otherwise subtraction as its oper
 
 =(test 0 (p))= would loop indefinitely in applicative-order evaluation (as in Scheme), because the argument gets evaluated when the function is called, not only once it's used in the body. In normal-oder evaluation, y would never get evaluated because the if-condition is true. =test= would return 0.
 
-** 1.1.7 Example: Square Roots using Newton's Method
+*** 1.1.7 Example: Square Roots using Newton's Method
 Iteration can be accomplished simply using the ability to call a procedure.
 
 #+begin_src scheme :exports both
@@ -214,7 +215,7 @@ Iteration can be accomplished simply using the ability to call a procedure.
 
   Quite nice, but not yet perfect for small numbers.
 
-*** DONE Exercise 1.6
+**** DONE Exercise 1.6
 #+begin_src scheme
   (define (new-if predicate then-clause else-clause)
     (cond (predicate then-clause)
@@ -226,7 +227,7 @@ Iteration can be accomplished simply using the ability to call a procedure.
 
 Because =new-if= is not a special form (unlike =if=), all the arguments get evaluated, so =sqrt-iter= would get called indefinitely if it used =new-if= instead of =if=.
 
-*** DONE Exercise 1.7
+**** DONE Exercise 1.7
 #+begin_src scheme :exports both
   (define (better-sqrt x)
      (define (improve guess)
@@ -251,7 +252,7 @@ Because =new-if= is not a special form (unlike =if=), all the arguments get eval
 
 Better!
 
-*** DONE Exercise 1.8
+**** DONE Exercise 1.8
 #+begin_src scheme :exports both
   (define (cube a)
     (* a a a))
@@ -280,18 +281,15 @@ Better!
 
 Yay!
 
-** 1.1.8 Procedures as Black-Box Abstractions
+*** 1.1.8 Procedures as Black-Box Abstractions
 - local names :: the names of the procedure's formal parameters should not matter to the user of the procedure
 - bound variable :: a formal parameter of a procedure, have the body of the procedure as their /scope/
 - free variable :: a variable that is not bound by the procedure definition
 - /block structure/ :: nesting of definitions within definitions to hide them from external use
 - lexical scoping :: free variables in a procedure refer to bindings made by enclosing procedure definitions -> they get looked up in the environment in which the procedure was defined (not in the environment in which it was called, as in dynamic scoping)
   
-* Chapter 1.2
-:PROPERTIES:
-:header-args:scheme: :session *sicp2* :post commentify(*this*) 
-:END:
-** 1.2.1 Linear Recursion and Iteration
+** Chapter 1.2
+*** 1.2.1 Linear Recursion and Iteration
 #+begin_src scheme
   (define (factorial-recursive n)
     (if (= n 1)
@@ -319,7 +317,7 @@ Yay!
 - A recursive /process/ is not the same as a recursive /procedure/. =factorial-iterative= has a recursive procedure definition, but the process it generates is iterative.
 - To allow for iterative processes to be generated by recursive procedure definitions, an implementation needs to be /tail-recursive/ (special iteration constructs can then be omitted).
   
-*** DONE Exercise 1.9
+**** DONE Exercise 1.9
 Generates a /recursive process/ for addition in terms of =inc= and =dec=:
 
 #+begin_src scheme :session none :exports both
@@ -356,7 +354,7 @@ Generates an /iterative process/ for addition in terms of =inc= and =dec=:
 #+RESULTS:
 : ;=> 5
 
-*** DONE Exercise 1.10 Ackermann's function
+**** DONE Exercise 1.10 Ackermann's function
 #+begin_src scheme
   (define (A x y)
     (cond ((= y 0) 0)
@@ -385,7 +383,7 @@ Generates an /iterative process/ for addition in terms of =inc= and =dec=:
 #+end_src
 
 #+RESULTS:
-: ;=> 65536
+: ;=> #<void>
 
 - 2^(2^n):
   
@@ -396,8 +394,8 @@ Generates an /iterative process/ for addition in terms of =inc= and =dec=:
 #+RESULTS:
 : ;=> #<void>
 
-** 1.2.2 Tree Recursion
-*** Fibonacci
+*** 1.2.2 Tree Recursion
+**** Fibonacci
 Tree-recursive process: The number of steps grows exponentially, space use linearly.
 #+begin_src scheme
   (define (fib-rec n)
@@ -428,7 +426,7 @@ Linear iterative process: The number of steps grows linearly, space use is const
 #+RESULTS:
 : ;=> 5
 
-*** Example: Counting Change
+**** Example: Counting Change
 Writing a procedure that calculates how many different ways there are of changing x amount of money with n different types of coins.
 
 #+begin_src scheme :exports both
@@ -460,7 +458,7 @@ Writing a procedure that calculates how many different ways there are of changin
 #+RESULTS:
 : ;=> 2435
 
-*** DONE Exercise 1.11
+**** DONE Exercise 1.11
 #+begin_src scheme :exports both :session none
   (define (func-rec n)
     (if (< n 3)
@@ -496,7 +494,7 @@ Writing a procedure that calculates how many different ways there are of changin
 #+RESULTS:
 : ;=> 1892
 
-*** DONE Exercise 1.12 - Pascal's Triangle
+***** DONE Exercise 1.12 - Pascal's Triangle
 #+begin_src scheme :exports both
   ;; h: height, x: steps from left
   (define (pascal-triangle-element h x) 
@@ -511,10 +509,10 @@ Writing a procedure that calculates how many different ways there are of changin
 #+RESULTS:
 : ;=> 293930
 
-*** TODO Exercise 1.13
+***** TODO Exercise 1.13
 - ideas: =(exact-integer-sqrt 5)= is 2 with remainder of 1.
   
-** 1.2.3 Orders of Growth
+*** 1.2.3 Orders of Growth
 - n :: parameter that measures the size of the problem
 - R(n) :: the amount of resources the process requires for a problem of size /n/
 - R(n) = Θ(f(n)) if there are positive constants /k1/ and /k2/ independent of /n/ such that $k1f(n) <= R(n) <= k2f(n)$ for any sufficiently large value of /n/ :: R(n) has order of growth Θ(f(n))
@@ -528,8 +526,8 @@ In other words: For any big /n/, the resources needed will be between $k1 * f(n)
 - Θ(n^2) :: expontential process, incrementing n will multiply resources by a constant factor
 - Θ(log(n)) :: logarithmic process, doubling n will increase resources by a constant amount
   
-*** TODO Exercise 1.14
-*** DONE Exercise 1.15
+**** TODO Exercise 1.14
+**** DONE Exercise 1.15
 - State "DONE"       from "TODO"       [2023-01-08 Sun 18:14]
   
 #+begin_src scheme :exports both :results output
@@ -553,8 +551,8 @@ In other words: For any big /n/, the resources needed will be between $k1 * f(n)
 1. =p= is applied 5 times when =(sine 12.15)= is evaluated.
 2. To get the order of growth in time for =(sine a)= relative to /a/, we first note that the recursive call to =sine= is the thing that will be relevant, as both =cube= and =p= just use a constant amount of steps for each call. =sine= is called as often as is needed to repeatedly divide /angle/ by 3.0 until it (or its absolute value) is smaller or equal to 0.1. So if we triple /angle/, we will need one more step, so the order of growth is $log_3(n)$. Same goes for order of growth in space, as every call to =p= is deferred until a small enough angle is reached.
    
-** 1.2.4 Exponentiation
-Recursive, O(n) steps, O(n) space:
+*** 1.2.4 Exponentiation
+Linear recursive process,  Θ(n) steps, Θ(n) space:
 #+begin_src scheme
   (define (expt-rec b n)
     (if (= n 0)
@@ -565,7 +563,7 @@ Recursive, O(n) steps, O(n) space:
 #+RESULTS:
 : ;=> #<void>
 
-Iterative, O(n) steps, O(1) space:
+Linear iterative process, Θ(n) steps, Θ(1) space:
 #+begin_src scheme
   (define (expt-iter b n)
     (define (iter counter product)
@@ -579,7 +577,7 @@ Iterative, O(n) steps, O(1) space:
 #+RESULTS:
 : ;=> #<void>
 
-Logarithmic, time O(log n):
+Logarithmic, time Θ(log n) steps, Θ(log n) space:
 #+begin_src scheme
   (define (even? n)
     (= (remainder n 2) 0))
@@ -593,14 +591,123 @@ Logarithmic, time O(log n):
 #+RESULTS:
 : ;=> #<void>
 
-** TODO Exercise 1.16
+Computing $b^2n$  with =fast-expt= only needs one more multiplication than computing $b^n$. Every new step allows for (roughly) double the problem size. Therefore, its order of growth is the logarithm of /n/ to the base 2, Θ(log n). The base to which logarithms are taken does not matter (because of the arbitrary constants /k1/ and /k2/), so we just write Θ(log n). [ TODO: I don't think I understand that last sentence yet. I get why a constant factor like 2n would be equal to n, but this seems different? ]
+
+**** DONE Exercise 1.16
+- State "DONE"       from "TODO"       [2023-01-08 Sun 22:01]
 #+begin_src scheme :exports both 
-    (define (fast-expt-iter b n)
-      (define (iter counter state)
-        (cond ((= counter 0) 1)
-              ((even? counter) (square n))))
-      nil)
+  (define (fast-expt-iter b n)
+    (define (iter b n a)
+      (cond ((= n 0) a)
+            ((even? n) (iter (square b) (/ n 2) a))
+            (else (iter b (- n 1) (* b a)))))
+    (iter b n 1))
+
+  (fast-expt-iter 2 2)
+#+end_src
+
+#+RESULTS:
+: ;=> 4
+
+- /invariant quantity/ :: Helpful technique for designing an iterative algorithm. In this case, /a/ * /b^n/ always stays the same (iterative algorithm: the complete state is always available), and at the end all the computation has moved "into" /a/, as b^n will be 1 when n=0, so we can return /a/.
+
+**** DONE Exercise 1.17
+- State "DONE"       from "TODO"       [2023-01-08 Sun 22:22]
+#+begin_src scheme :exports both :session none
+  (define (* a b)
+    (if (= b 0)
+        0
+        (+ a (* a (- b 1)))))
 #+end_src
 
 #+RESULTS:
 : ;=> #<void>
+
+#+begin_src scheme :exports both 
+  (define (double n) (* 2 n))
+
+  (define (halve n) (/ n 2))
+
+  (define (fast-multiplication a b)
+    (cond ((= 0 b) 0)
+          ((even? b) (double (fast-multiplication a (halve b))))
+          (else (+ a (fast-multiplication a (- b 1))))))
+
+  (fast-multiplication 150 231)
+#+end_src
+
+#+RESULTS:
+: ;=> 34650
+
+**** DONE Exercise 1.18  "Russian peasant multiplication"
+- State "DONE"       from "TODO"       [2023-01-08 Sun 22:38]
+
+#+begin_src scheme :exports both 
+  (define (fast-multiplication-iterative a b)
+    (define (iter a b z)
+      (cond ((= b 0) z)
+            ((even? b) (iter (double a) (halve b) z))
+            (else (iter a (- b 1) (+ z a)))))
+    (iter a b 0))
+
+  (fast-multiplication-iterative 7098 9388)
+#+end_src
+
+#+RESULTS:
+: ;=> 66636024
+
+**** TODO Exercise 1.19 Fibonacci numbers in logarithmic number of steps
+
+Transformation T for Fibonacci numbers:
+=T: a <- a + b
+   b <- a=
+
+This is a special case of transformation T_pq, where p = 0 and q = 1.
+
+=T_pq: a <- bq + aq + ap
+      b <- bp + aq=
+
+Applying a transformation T_pq twice ("squaring" it) gives:
+
+=a2: (bp + aq) * q + (bq + aq + ap) * q + (bq + aq + ap) * p=
+=b2: (bp + aq) * p + (bq + aq + ap) * q=
+
+Which is equal to:
+
+=a2:  b(q^2 + 2pq) + a(p^2 + q^2) +  a(q^2 + 2pq)==
+=b2:  b(p^2 + q^2) + a(q^2 + 2pq)==
+
+So it can be expressed as another transformation T with
+
+=p' : q^2 + 2pq=
+=q' : p^2 + q^2=
+
+Used in a sucessive-squaring algorithm:
+
+#+begin_src scheme :exports both 
+  (define (fib-iter a b p q count)
+    (cond ((= count 0) b)
+          ((even? count)
+           (fib-iter a
+                     b
+                     (+ (square q) (* 2 p q))
+                     (+ (square p) (square q))
+                     (/ count 2)))
+          (else (fib-iter (+ (* b q) (* a q) (* a p))
+                          (+ (* b p) (* a q))
+                          p
+                          q
+                          (- count 1)))))
+
+  (define (fib n)
+    (fib-iter 1 0 0 1 n))
+
+  (fib 11)
+#+end_src
+
+#+RESULTS:
+: ;=> 71
+
+**** 
+
+**** 
