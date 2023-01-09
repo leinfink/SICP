@@ -656,8 +656,9 @@ Computing $b^2n$  with =fast-expt= only needs one more multiplication than compu
 #+RESULTS:
 : ;=> 66636024
 
-**** TODO Exercise 1.19 Fibonacci numbers in logarithmic number of steps
+**** DONE Exercise 1.19 Fibonacci numbers in logarithmic number of steps
 
+- State "DONE"       from "TODO"       [2023-01-09 Mon 10:31]
 Transformation T for Fibonacci numbers:
 =T: a <- a + b
    b <- a=
@@ -679,19 +680,19 @@ Which is equal to:
 
 So it can be expressed as another transformation T with
 
-=p' : q^2 + 2pq=
-=q' : p^2 + q^2=
+=p' : p^2 + q^2=
+=q' : q^2 + 2pq=
 
 Used in a sucessive-squaring algorithm:
 
-#+begin_src scheme :exports both 
+#+begin_src scheme :exports both
   (define (fib-iter a b p q count)
     (cond ((= count 0) b)
           ((even? count)
            (fib-iter a
                      b
-                     (+ (square q) (* 2 p q))
                      (+ (square p) (square q))
+                     (+ (square q) (* 2 p q))
                      (/ count 2)))
           (else (fib-iter (+ (* b q) (* a q) (* a p))
                           (+ (* b p) (* a q))
@@ -702,12 +703,11 @@ Used in a sucessive-squaring algorithm:
   (define (fib n)
     (fib-iter 1 0 0 1 n))
 
-  (fib 11)
+  (fib 100)
 #+end_src
 
 #+RESULTS:
-: ;=> 71
+: ;=> 354224848179261915075
 
 **** 
 
-**** 
