@@ -293,7 +293,7 @@ Yay!
 - /block structure/ :: nesting of definitions within definitions to hide them from external use
 - lexical scoping :: free variables in a procedure refer to bindings made by enclosing procedure definitions -> they get looked up in the environment in which the procedure was defined (not in the environment in which it was called, as in dynamic scoping)
   
-** TODO 1.2 Procedures and the Processes They Generate [10/20]
+** TODO 1.2 Procedures and the Processes They Generate [13/20]
   :PROPERTIES:
   :COOKIE_DATA: todo recursive
   :END:
@@ -772,6 +772,9 @@ Euclid's algorithm =gcd= in /normal-order/ evaluation, illustrated with the subs
 The applicative-order evaluation makes 4 calls to =remainder=.
 
 *** 1.2.6 Example: Testing for Primality
+
+Finding the smallest integral divisor greater than 1 of /n/ (if it's /n/, then /n/ is prime):
+
 #+begin_src scheme :exports both
   (define (divides? a b) (= (remainder b a) 0))
 
@@ -782,14 +785,257 @@ The applicative-order evaluation makes 4 calls to =remainder=.
 
   (define (smallest-divisor n)
     (find-divisor n 2))
+
+  (define (prime? n)
+    (= n (smallest-divisor n)))
+
+  (prime? 29)
+#+end_src
+
+#+RESULTS:
+: ;=> #t
+
+This algorithm checks all numbers between 1 and =(sqrt n)=, so it has order of growth Θ(√n). It only has to check up to =(sqrt n)=, because if /d/ is a divisor of /n/, then /n/d/ is as well, but it's not possible for both of them to be bigger than =(sqrt n)= (that would be higher than =(expt (sqrt n) 2)=, so higher than /n/). (So, any divisors bigger than =(sqrt n)= already get "caught" via their smaller counterpart.)
+
+The Fermat Test:
+
+- Fermat's Little Theorem :: If /n/ is a prime number and /a/ is any positive integer less than /n/, then /a/ raised to the /n/-th power is congurent to /a/ modulo /n/ (= has the same remainder as /a/ when divided by /n/).
+
+  /In general/ (but not always!), non-prime /n/ will not satisfy this theorem. From this, we can devise a /probabilistic/ algorithm to test for primality, by checking more and more random integers smaller than /n/ for alignment with Fermat's Little Theorem.
+
+  First, computing the exponential of a number modulo another number (using successive squaring):
+
+  #+begin_src scheme :exports both 
+    (define (expmod base exp m)
+      (cond ((= exp 0) 1)
+            ((even? exp) (remainder (square (expmod base (/ exp 2) m)) m))
+            (else (remainder (* base (expmod base (- exp 1) m)) m))))
+
+    (expmod 2 4 9)
+  #+end_src
+
+  #+RESULTS:
+  : ;=> 7
+
+The fermat test now takes a random number /a/ between 1 and /n/-1 and check if the /n/-th power of /a/ modulo /n/ is /a/.
+
+#+begin_src scheme :exports both
+  (define (fermat-test n)
+    (define (try-it a)
+      (= (expmod a n n) a))
+    (try-it (+ 1 (random (- n 1)))))
 #+end_src
 
 #+RESULTS:
 : ;=> #<void>
 
-**** TODO Exercise 1.21
-**** TODO Exercise 1.22
-**** TODO Exercise 1.23
+Now, we can run this as often as we want, to get more and more sure of our answer about the primality of n:
+
+#+begin_src scheme :exports both 
+  (define (fast-prime? n times)
+    (cond ((= times 0) #t)
+          ((fermat-test n) (fast-prime? n (- times 1)))
+          (else #f)))
+
+  (fast-prime? 87083 100)
+#+end_src
+
+#+RESULTS:
+: ;=> #t
+
+This algorithm is /probabilisitic/. While failing the Fermat test is a /certain/ indication that /n/ is not prime, passing our algorithm makes this not certain, but only very probable. What's more, there are some very few numbers (/Carmichael numbers/) that fully fool the Fermat test, they are not prime but satisfy Fermat's relation (so even if we test /all/ integers smaller than /n/, we can still not be sure.) But there are some alternative algorithms that fix this, so that the probability really increases with every additional check.
+
+**** DONE Exercise 1.21
+- State "DONE"       from "TODO"       [2023-01-09 Mon 13:32]
+  
+#+begin_src scheme :exports both
+  (smallest-divisor 199)
+#+end_src
+
+#+RESULTS:
+: ;=> 199
+
+#+begin_src scheme :exports both 
+  (smallest-divisor 1999)
+#+end_src
+
+#+RESULTS:
+: ;=> 1999
+
+#+begin_src scheme :exports both 
+  (smallest-divisor 19999)
+#+end_src
+
+#+RESULTS:
+: ;=> 7
+
+Yoo...
+
+#+begin_src scheme :exports both 
+ (/ 19999 7)
+#+end_src
+
+#+RESULTS:
+: ;=> 2857
+
+**** DONE Exercise 1.22
+- State "DONE"       from "TODO"       [2023-01-09 Mon 14:21]
+#+begin_src scheme :exports both
+  (define (report-prime n elapsed-time)
+    (newline)
+    (display n)
+    (display " *** ")
+    (display elapsed-time))
+
+  (define (start-prime-test n start-time)
+    (if (prime? n)
+        (report-prime n (time-difference (current-time) start-time))
+        #f))
+
+  (define (timed-prime-test n)
+    (start-prime-test n (current-time)))
+#+end_src
+
+#+RESULTS:
+: ;=> #<void>
+
+#+begin_src scheme :exports both :results output
+  (define (search-for-primes start end count)
+    (cond ((>= start end) nil)
+          ((= count 0) nil)
+          ((even? start) (search-for-primes (+ 1 start) end count))
+          (else (if (timed-prime-test start)
+                    (search-for-primes (+ 2 start) end (- count 1))
+                    (search-for-primes (+ 2 start) end count)))))
+  
+  (search-for-primes 1000 2000 3)
+#+end_src
+
+#+RESULTS:
+: ;=> 
+: 1009 *** #<time-duration 0.000001987>
+: 1013 *** #<time-duration 0.000001884>
+: 1019 *** #<time-duration 0.000001944>
+
+#+begin_src scheme :exports both :results output
+  (search-for-primes 10000 12000 3)
+#+end_src
+
+#+RESULTS:
+: ;=> 
+: 10007 *** #<time-duration 0.000005920>
+: 10009 *** #<time-duration 0.000005983>
+: 10037 *** #<time-duration 0.000005777>
+
+#+begin_src scheme :exports both :results output
+  (search-for-primes 100000 120000 3)
+#+end_src
+
+#+RESULTS:
+: ;=> 
+: 100003 *** #<time-duration 0.000018127>
+: 100019 *** #<time-duration 0.000018072>
+: 100043 *** #<time-duration 0.000018015>
+
+How do the measured times match up with the prediction one could get from the Θ(√n) order of growth of the algorithm?
+
+#+begin_src scheme :exports both 
+(* (sqrt 10) 2000)
+#+end_src
+
+#+RESULTS:
+: ;=> 6324.55533035135
+
+My 10,000 area primes seem to have taken around as long as predicted. (But the times vary a lot for each re-evaluation on my system, sometimes it doesn't match at all and can, for example, take up to 2 times longer than expected.) Note that the timings will be updated every time I reevaluate the buffer with /org-babel/, but my manual calculation here is fixed to a rough time I took once.
+
+#+begin_src scheme :exports both 
+(* (sqrt 10) 6000)
+#+end_src
+
+#+RESULTS:
+: ;=> 18973.66599105405
+
+For the 100,000 area primes the times seem to match the prediction quite well (and pretty stably so), relative to the 10,000 times.
+
+Is my result compatible with the notion that programs on my machine run in time proportional to the number of steps required for the computation? I guess this holds true for large number of steps, wiht low number of steps there is sometimes a mismatch, maybe caused by some constant overhead? But then why does that result in a doubling of the expected times?
+
+**** DONE Exercise 1.23
+- State "DONE"       from "TODO"       [2023-01-09 Mon 14:25]
+#+begin_src scheme :exports both 
+       (define (next n) (if (= n 2) 3 (+ n 2)))
+
+       (define (find-divisor-modified n test-divisor)
+         (cond ((> (square test-divisor) n) n)
+               ((divides? test-divisor n) test-divisor)
+               (else (find-divisor-modified n (next test-divisor)))))
+
+       (define (smallest-divisor-modified n)
+         (find-divisor-modified n 2))
+
+       (define (prime-modified? n)
+         (= n (smallest-divisor-modified n)))
+
+        (define (report-prime-modified n elapsed-time)
+         (newline)
+         (display n)
+         (display " *** ")
+         (display elapsed-time))
+
+       (define (start-prime-test-modified n start-time)
+         (if (prime-modified? n)
+             (report-prime-modified
+              n (time-difference (current-time) start-time))
+             #f))
+
+       (define (timed-prime-test-modified n)
+         (start-prime-test-modified n (current-time)))
+
+       (define (search-for-primes-modified start end count)
+         (cond ((>= start end) nil)
+               ((= count 0) nil)
+               ((even? start) (search-for-primes-modified
+                               (+ 1 start) end count))
+               (else (if (timed-prime-test-modified start)
+                         (search-for-primes-modified
+                          (+ 2 start) end (- count 1))
+                         (search-for-primes-modified
+                          (+ 2 start) end count)))))    
+#+end_src
+
+#+RESULTS:
+: ;=> #<void>
+
+#+begin_src scheme :exports both :results output
+  (search-for-primes-modified 1000 2000 3)  
+#+end_src
+
+#+RESULTS:
+: ;=> 
+: 1009 *** #<time-duration 0.000001433>
+: 1013 *** #<time-duration 0.000001313>
+: 1019 *** #<time-duration 0.000001236>
+
+#+begin_src scheme :exports both :results output
+  (search-for-primes-modified 10000 12000 3)
+#+end_src
+
+#+RESULTS:
+: ;=> 
+: 10007 *** #<time-duration 0.000003568>
+: 10009 *** #<time-duration 0.000003639>
+: 10037 *** #<time-duration 0.000003281>
+
+#+begin_src scheme :exports both :results output
+  (search-for-primes-modified 100000 120000 3)
+#+end_src
+
+#+RESULTS:
+: ;=> 
+: 100003 *** #<time-duration 0.000003932>
+: 100019 *** #<time-duration 0.000003730>
+: 100043 *** #<time-duration 0.000003712>
+
+The modification halved the number of steps. Time varies significantly for each re-evaluation on my system, I don't know why. This makes conclusions hard. But for the 1000 area primes, the modification appears to have made it 4 times faster (but sometimes not). For 10,000 area primes, the time got roughly halved (sometimes not). For 100,000 area primes, there is sometimes no noticeable benefit, but sometimes it even goes to around 4 to 5 times faster! So yeah, uncertain conclusion, certainly no simple ratio. 
 **** TODO Exercise 1.24
 **** TODO Exercise 1.25
 **** TODO Exercise 1.26
