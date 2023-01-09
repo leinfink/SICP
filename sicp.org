@@ -293,7 +293,7 @@ Yay!
 - /block structure/ :: nesting of definitions within definitions to hide them from external use
 - lexical scoping :: free variables in a procedure refer to bindings made by enclosing procedure definitions -> they get looked up in the environment in which the procedure was defined (not in the environment in which it was called, as in dynamic scoping)
   
-** TODO 1.2 Procedures and the Processes They Generate [9/20]
+** TODO 1.2 Procedures and the Processes They Generate [10/20]
   :PROPERTIES:
   :COOKIE_DATA: todo recursive
   :END:
@@ -718,7 +718,58 @@ Used in a sucessive-squaring algorithm:
 : ;=> 354224848179261915075
 
 *** 1.2.5 Greatest Common Divisors
-**** TODO Exercise 1.20
+
+Euclid's algorithm:
+
+#+begin_src scheme :exports both 
+  (define (gcd a b)
+    (if (= b 0)
+        a
+        (gcd b (remainder a b))))
+#+end_src
+
+#+RESULTS:
+: ;=> #<void>
+
+**** DONE Exercise 1.20
+- State "DONE"       from "TODO"       [2023-01-09 Mon 12:47]
+  
+Euclid's algorithm =gcd= in /normal-order/ evaluation, illustrated with the subsitution method (/R/ indicates a call to =remainder=)
+
+  #+begin_src 
+    (define (gcd a b) (if (= b 0) a (gcd b (remainder a b))))
+
+    (gcd 206 40): (if (= 40 0) XX (gcd 40 (remainder 206 40)))
+    (gcd 40 (remainder 206 40)): (if (= (remainder 206 40) 0)...
+                               R ;   (= 6 0) ...
+    (gcd (remainder 206 40) (remainder 40 (remainder 206 40))):
+        (if (= (remainder 40 (remainder 206 40)) 0) ...
+     RR   ; (= 4 0) ...
+    (gcd (remainder 40 (remainder 206 40)) (remainder (remainder 206 40) (remainder 40 (remainder 206 40)))):
+         (if (= (remainder (remainder 206 40) (remainder 40 (remainder 206 40))) 0): ...
+    RRRR ; (= 2 0) ...
+    (gcd (remainder (remainder 206 40) (remainder 40 (remainder 206 40))) (remainder (remainder 40 (remainder 206 40)) (remainder (remainder 206 40) (remainder 40 (remainder 206 40)))))
+         (if (= (remainder (remainder 40 (remainder 206 40)) (remainder (remainder 206 40) (remainder 40 (remainder 206 40)))) 0) ...
+    RRRRRRR ; (= 0 0)
+    ; -> (remainder (remainder 206 40) (remainder 40 (remainder 206 40)))
+    RRRR   ; 2                            
+  #+end_src
+
+  The normal-order evaluation makes 18 calls to =remainder=.
+
+  Applicative-order evaluation:
+
+  #+begin_src
+ (define (gcd a b) (if (= b 0) a (gcd b (remainder a b))))
+     (gcd 206 40): (if (= 40 0) 206 (gcd 40 (remainder 206 40))) ; R
+     (gcd 40 6)  : (if (= 6 0) 40 (gcd 6 (remainder 40 6))) ; R
+     (gcd 6 4)   : (if (= 4 0) 6 (gcd 4 (remainder 6 4))) ; R
+     (gcd 4 2)   : (if (= 2 0) 4 (gcd 2 (remainder 4 2))) ; R
+     (gcd 2 0)   : (if (= 0 0) 2 (gcd 0 (remainder 2 0)))
+   #+end_src
+
+The applicative-order evaluation makes 4 calls to =remainder=.
+
 *** 1.2.6 Example: Testing for Primality
 **** TODO Exercise 1.21
 **** TODO Exercise 1.22
