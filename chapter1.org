@@ -11,11 +11,16 @@
 
 /Attribution:/ Harold Abelson and Gerald Jay Sussman with Julie Sussman, foreword by Alan J. Perlis, ©1996 by The Massachusetts Institute of Technology, licensed under the Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0). Notes, (modified or adjusted) excerpts, and exercises by @leinfink.
 
-* Chapter 1
+* TODO Chapter 1 [58%]
 :PROPERTIES:
-:header-args:scheme: :session *sicp1* :post commentify(*this*) 
+:header-args:scheme: :session *sicp1* :post commentify(*this*)
+:COOKIE_DATA: todo recursive
 :END:
-** Chapter 1.1 The Elements of Programming
+** DONE 1.1 The Elements of Programming [8/8]
+  :PROPERTIES:
+  :COOKIE_DATA: todo recursive
+  :END:
+
 - primitive expressions
 - means of combination
 - means of abstraction
@@ -288,7 +293,10 @@ Yay!
 - /block structure/ :: nesting of definitions within definitions to hide them from external use
 - lexical scoping :: free variables in a procedure refer to bindings made by enclosing procedure definitions -> they get looked up in the environment in which the procedure was defined (not in the environment in which it was called, as in dynamic scoping)
   
-** Chapter 1.2
+** TODO 1.2 Procedures and the Processes They Generate [9/20]
+  :PROPERTIES:
+  :COOKIE_DATA: todo recursive
+  :END:
 *** 1.2.1 Linear Recursion and Iteration
 #+begin_src scheme
   (define (factorial-recursive n)
@@ -710,5 +718,15 @@ Used in a sucessive-squaring algorithm:
 : ;=> 354224848179261915075
 
 *** 1.2.5 Greatest Common Divisors
-
+**** TODO Exercise 1.20
+*** 1.2.6 Example: Testing for Primality
+**** TODO Exercise 1.21
+**** TODO Exercise 1.22
+**** TODO Exercise 1.23
+**** TODO Exercise 1.24
+**** TODO Exercise 1.25
+**** TODO Exercise 1.26
+**** TODO Exercise 1.27
+**** TODO Exercise 1.28
+** TODO 1.3 Formulating Abstractions with Higher-Order Procedures
 
