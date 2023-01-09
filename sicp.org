@@ -11,7 +11,7 @@
 
 /Attribution:/ Harold Abelson and Gerald Jay Sussman with Julie Sussman, foreword by Alan J. Perlis, ©1996 by The Massachusetts Institute of Technology, licensed under the Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0). Notes, (modified or adjusted) excerpts, and exercises by @leinfink.
 
-* TODO Chapter 1 [36%]
+* TODO Chapter 1 [44%]
 :PROPERTIES:
 :header-args:scheme: :session *sicp1* :post commentify(*this*)
 :COOKIE_DATA: todo recursive
