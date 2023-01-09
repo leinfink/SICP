@@ -11,7 +11,7 @@
 
 /Attribution:/ Harold Abelson and Gerald Jay Sussman with Julie Sussman, foreword by Alan J. Perlis, ©1996 by The Massachusetts Institute of Technology, licensed under the Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0). Notes, (modified or adjusted) excerpts, and exercises by @leinfink.
 
-* TODO Chapter 1 [58%]
+* TODO Chapter 1 [36%]
 :PROPERTIES:
 :header-args:scheme: :session *sicp1* :post commentify(*this*)
 :COOKIE_DATA: todo recursive
@@ -728,5 +728,33 @@ Used in a sucessive-squaring algorithm:
 **** TODO Exercise 1.26
 **** TODO Exercise 1.27
 **** TODO Exercise 1.28
-** TODO 1.3 Formulating Abstractions with Higher-Order Procedures
-
+** TODO 1.3 Formulating Abstractions with Higher-Order Procedures [0/18]
+  :PROPERTIES:
+  :COOKIE_DATA: todo recursive
+  :END:
+*** 1.3.1 Procedures as Arguments
+**** TODO Exercise 1.29
+**** TODO Exercise 1.30
+**** TODO Exercise 1.31
+**** TODO Exercise 1.32
+**** TODO Exercise 1.33
+*** 1.3.2 Constructing Procedures Using =lambda=
+**** TODO Exercise 1.34
+*** 1.3.3 Procedures as General Methods
+**** TODO Exercise 1.35
+**** TODO Exercise 1.36
+**** TODO Exercise 1.37
+**** TODO Exercise 1.38
+**** TODO Exercise 1.39
+*** 1.3.4 Procedures as Returned Values
+**** TODO Exercise 1.40
+**** TODO Exercise 1.41
+**** TODO Exercise 1.42
+**** TODO Exercise 1.43
+**** TODO Exercise 1.44
+**** TODO Exercise 1.45
+**** TODO Exercise 1.46
+* Chapter 2
+* Chapter 3
+* Chapter 4
+* Chapter 5
