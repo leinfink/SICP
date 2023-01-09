@@ -709,5 +709,6 @@ Used in a sucessive-squaring algorithm:
 #+RESULTS:
 : ;=> 354224848179261915075
 
-**** 
+*** 1.2.5 Greatest Common Divisors
+
 
