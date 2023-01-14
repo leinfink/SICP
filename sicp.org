@@ -11,7 +11,7 @@
 
 /Attribution:/ Harold Abelson and Gerald Jay Sussman with Julie Sussman, foreword by Alan J. Perlis, ©1996 by The Massachusetts Institute of Technology, licensed under the Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0). Notes, (modified or adjusted) excerpts, and exercises by @leinfink.
 
-* TODO Chapter 1 [53%]
+* TODO Chapter 1 [55%]
 :PROPERTIES:
 :header-args:scheme: :session *sicp1* :post commentify(*this*)
 :COOKIE_DATA: todo recursive
@@ -293,7 +293,7 @@ Yay!
 - /block structure/ :: nesting of definitions within definitions to hide them from external use
 - lexical scoping :: free variables in a procedure refer to bindings made by enclosing procedure definitions -> they get looked up in the environment in which the procedure was defined (not in the environment in which it was called, as in dynamic scoping)
   
-** TODO 1.2 Procedures and the Processes They Generate [17/20]
+** TODO 1.2 Procedures and the Processes They Generate [18/20]
   :PROPERTIES:
   :COOKIE_DATA: todo recursive
   :END:
@@ -908,34 +908,34 @@ Yoo...
                     (search-for-primes (+ 2 start) end (- count 1))
                     (search-for-primes (+ 2 start) end count)))))
   
-  (search-for-primes 1000 2000 3)
+ ;; (search-for-primes 1000 2000 3)
 #+end_src
 
 #+RESULTS:
 : ;=> 
-: 1009 *** #<time-duration 0.000000790>
-: 1013 *** #<time-duration 0.000000754>
-: 1019 *** #<time-duration 0.000000747>
+: 1009 *** #<time-duration 0.000002055>
+: 1013 *** #<time-duration 0.000001951>
+: 1019 *** #<time-duration 0.000001898>
 
 #+begin_src scheme :exports both :results output
-  (search-for-primes 10000 12000 3)
+ ;; (search-for-primes 10000 12000 3)
 #+end_src
 
 #+RESULTS:
 : ;=> 
-: 10007 *** #<time-duration 0.000002366>
-: 10009 *** #<time-duration 0.000002401>
-: 10037 *** #<time-duration 0.000002288>
+: 10007 *** #<time-duration 0.000002329>
+: 10009 *** #<time-duration 0.000002310>
+: 10037 *** #<time-duration 0.000002252>
 
 #+begin_src scheme :exports both :results output
-  (search-for-primes 100000 120000 3)
+ ;; (search-for-primes 100000 120000 3)
 #+end_src
 
 #+RESULTS:
 : ;=> 
-: 100003 *** #<time-duration 0.000006836>
-: 100019 *** #<time-duration 0.000009250>
-: 100043 *** #<time-duration 0.000011635>
+: 100003 *** #<time-duration 0.000025949>
+: 100019 *** #<time-duration 0.000009180>
+: 100043 *** #<time-duration 0.000009056>
 
 How do the measured times match up with the prediction one could get from the Θ(√n) order of growth of the algorithm?
 
@@ -1006,34 +1006,34 @@ Is my result compatible with the notion that programs on my machine run in time 
 : ;=> #<void>
 
 #+begin_src scheme :exports both :results output
-  (search-for-primes-modified 1000 2000 3)  
+ ;; (search-for-primes-modified 1000 2000 3)  
 #+end_src
 
 #+RESULTS:
 : ;=> 
-: 1009 *** #<time-duration 0.000000519>
-: 1013 *** #<time-duration 0.000000463>
-: 1019 *** #<time-duration 0.000000471>
+: 1009 *** #<time-duration 0.000001326>
+: 1013 *** #<time-duration 0.000001169>
+: 1019 *** #<time-duration 0.000001198>
 
 #+begin_src scheme :exports both :results output
-  (search-for-primes-modified 10000 12000 3)
+  ;; (search-for-primes-modified 10000 12000 3)
 #+end_src
 
 #+RESULTS:
 : ;=> 
-: 10007 *** #<time-duration 0.000001370>
-: 10009 *** #<time-duration 0.000001398>
-: 10037 *** #<time-duration 0.000001306>
+: 10007 *** #<time-duration 0.000001312>
+: 10009 *** #<time-duration 0.000001304>
+: 10037 *** #<time-duration 0.000001222>
 
 #+begin_src scheme :exports both :results output
-  (search-for-primes-modified 100000 120000 3)
+ ;; (search-for-primes-modified 100000 120000 3)
 #+end_src
 
 #+RESULTS:
 : ;=> 
-: 100003 *** #<time-duration 0.000006343>
-: 100019 *** #<time-duration 0.000003723>
-: 100043 *** #<time-duration 0.000003698>
+: 100003 *** #<time-duration 0.000003846>
+: 100019 *** #<time-duration 0.000003748>
+: 100043 *** #<time-duration 0.000003750>
 
 The modification halved the number of steps. Time varies significantly for each re-evaluation on my system, I don't know why. This makes conclusions hard. But for the 1000 area primes, the modification appears to have made it 4 times faster (but sometimes not). For 10,000 area primes, the time got roughly halved (sometimes not). For 100,000 area primes, there is sometimes no noticeable benefit, but sometimes it even goes to around 4 to 5 times faster! So yeah, uncertain conclusion, certainly no simple ratio. 
 **** DONE Exercise 1.24
@@ -1059,29 +1059,29 @@ The modification halved the number of steps. Time varies significantly for each 
 : ;=> #<void>
 
 #+begin_src scheme :exports both :results output
-  (timed-prime-test-fast 1009)
-  (timed-prime-test-fast 1013)
-  (timed-prime-test-fast 1019)
-  (timed-prime-test-fast 10007)
-  (timed-prime-test-fast 10009)
-  (timed-prime-test-fast 10037)
-  (timed-prime-test-fast 100003)
-  (timed-prime-test-fast 100019)
-  (timed-prime-test-fast 100043)
+  ;; (timed-prime-test-fast 1009)
+  ;; (timed-prime-test-fast 1013)
+  ;; (timed-prime-test-fast 1019)
+  ;; (timed-prime-test-fast 10007)
+  ;; (timed-prime-test-fast 10009)
+  ;; (timed-prime-test-fast 10037)
+  ;; (timed-prime-test-fast 100003)
+  ;; (timed-prime-test-fast 100019)
+  ;; (timed-prime-test-fast 100043)
 #+end_src
 
 #+RESULTS:
 #+begin_example
 ;=> 
-1009 *** #<time-duration 0.001188922>
-1013 *** #<time-duration 0.001200553>
-1019 *** #<time-duration 0.001254955>
-10007 *** #<time-duration 0.001667210>
-10009 *** #<time-duration 0.001704247>
-10037 *** #<time-duration 0.001665057>
-100003 *** #<time-duration 0.001963052>
-100019 *** #<time-duration 0.002010337>
-100043 *** #<time-duration 0.002018251>
+1009 *** #<time-duration 0.001127685>
+1013 *** #<time-duration 0.001193534>
+1019 *** #<time-duration 0.001183099>
+10007 *** #<time-duration 0.001617470>
+10009 *** #<time-duration 0.001551782>
+10037 *** #<time-duration 0.001586221>
+100003 *** #<time-duration 0.002109906>
+100019 *** #<time-duration 0.001971447>
+100043 *** #<time-duration 0.001989412>
 #+end_example
 
 I would expect primes around a million to take about twice as long as primes around 1000, going from 10 to 1000 and going from 1000 to a million both involves an exponentiation to the power of 3, and =fast-prime?= has a logarithmic order of growth.  In fact, it even seems to take a bit less than twice as long.
@@ -1118,7 +1118,37 @@ When we use =square=, applicative-order evaluation allows us to calculate =(expm
 #+RESULTS:
 : ;=> #t#t#t#t#t#t
 
-**** TODO Exercise 1.28
+**** DONE Exercise 1.28
+- State "DONE"       from "TODO"       [2023-01-14 Sat 11:57]
+#+begin_src scheme :exports both :results output 
+  (define (fast-prime-mr? n times)
+    (define (expmod base exp m)
+      (cond ((= exp 0) 1)
+            ((even? exp)
+             (let* ((x (expmod base (/ exp 2) m))
+                   (rem (remainder (square x) m)))
+               (if (and (= rem 1) (not (= x 1)) (not (= x (- m 1))))
+                   0
+                   rem)))
+            (else (remainder (* base (expmod base (- exp 1) m)) m))))
+    (define (test n)
+      (define (try-it a)
+        (= (expmod a n n) a))
+      (try-it (+ 1 (random (- n 1)))))
+
+    (cond ((= times 0) #t)
+          ((test n) (fast-prime-mr? n (- times 1)))
+          (else #f)))
+
+  (display (fast-prime-mr? 97 100)) ; prime
+  (display (fast-prime-mr? 561 100)) ; carmichael
+  (display (fast-prime-mr? 1729 100)) ; carmichael
+
+#+end_src
+
+#+RESULTS:
+: ;=> #t#f#f
+
 ** TODO 1.3 Formulating Abstractions with Higher-Order Procedures [0/18]
   :PROPERTIES:
   :COOKIE_DATA: todo recursive
