@@ -913,9 +913,6 @@ Yoo...
 
 #+RESULTS:
 : ;=> 
-: 1009 *** #<time-duration 0.000002055>
-: 1013 *** #<time-duration 0.000001951>
-: 1019 *** #<time-duration 0.000001898>
 
 #+begin_src scheme :exports both :results output
  ;; (search-for-primes 10000 12000 3)
@@ -923,9 +920,6 @@ Yoo...
 
 #+RESULTS:
 : ;=> 
-: 10007 *** #<time-duration 0.000002329>
-: 10009 *** #<time-duration 0.000002310>
-: 10037 *** #<time-duration 0.000002252>
 
 #+begin_src scheme :exports both :results output
  ;; (search-for-primes 100000 120000 3)
@@ -933,9 +927,6 @@ Yoo...
 
 #+RESULTS:
 : ;=> 
-: 100003 *** #<time-duration 0.000025949>
-: 100019 *** #<time-duration 0.000009180>
-: 100043 *** #<time-duration 0.000009056>
 
 How do the measured times match up with the prediction one could get from the Θ(√n) order of growth of the algorithm?
 
@@ -1011,9 +1002,6 @@ Is my result compatible with the notion that programs on my machine run in time 
 
 #+RESULTS:
 : ;=> 
-: 1009 *** #<time-duration 0.000001326>
-: 1013 *** #<time-duration 0.000001169>
-: 1019 *** #<time-duration 0.000001198>
 
 #+begin_src scheme :exports both :results output
   ;; (search-for-primes-modified 10000 12000 3)
@@ -1021,9 +1009,6 @@ Is my result compatible with the notion that programs on my machine run in time 
 
 #+RESULTS:
 : ;=> 
-: 10007 *** #<time-duration 0.000001312>
-: 10009 *** #<time-duration 0.000001304>
-: 10037 *** #<time-duration 0.000001222>
 
 #+begin_src scheme :exports both :results output
  ;; (search-for-primes-modified 100000 120000 3)
@@ -1031,9 +1016,6 @@ Is my result compatible with the notion that programs on my machine run in time 
 
 #+RESULTS:
 : ;=> 
-: 100003 *** #<time-duration 0.000003846>
-: 100019 *** #<time-duration 0.000003748>
-: 100043 *** #<time-duration 0.000003750>
 
 The modification halved the number of steps. Time varies significantly for each re-evaluation on my system, I don't know why. This makes conclusions hard. But for the 1000 area primes, the modification appears to have made it 4 times faster (but sometimes not). For 10,000 area primes, the time got roughly halved (sometimes not). For 100,000 area primes, there is sometimes no noticeable benefit, but sometimes it even goes to around 4 to 5 times faster! So yeah, uncertain conclusion, certainly no simple ratio. 
 **** DONE Exercise 1.24
@@ -1071,18 +1053,7 @@ The modification halved the number of steps. Time varies significantly for each 
 #+end_src
 
 #+RESULTS:
-#+begin_example
-;=> 
-1009 *** #<time-duration 0.001127685>
-1013 *** #<time-duration 0.001193534>
-1019 *** #<time-duration 0.001183099>
-10007 *** #<time-duration 0.001617470>
-10009 *** #<time-duration 0.001551782>
-10037 *** #<time-duration 0.001586221>
-100003 *** #<time-duration 0.002109906>
-100019 *** #<time-duration 0.001971447>
-100043 *** #<time-duration 0.001989412>
-#+end_example
+: ;=> 
 
 I would expect primes around a million to take about twice as long as primes around 1000, going from 10 to 1000 and going from 1000 to a million both involves an exponentiation to the power of 3, and =fast-prime?= has a logarithmic order of growth.  In fact, it even seems to take a bit less than twice as long.
 
@@ -1149,16 +1120,189 @@ When we use =square=, applicative-order evaluation allows us to calculate =(expm
 #+RESULTS:
 : ;=> #t#f#f
 
-** TODO 1.3 Formulating Abstractions with Higher-Order Procedures [0/18]
+** TODO 1.3 Formulating Abstractions with Higher-Order Procedures [5/18]
   :PROPERTIES:
   :COOKIE_DATA: todo recursive
   :END:
 *** 1.3.1 Procedures as Arguments
-**** TODO Exercise 1.29
-**** TODO Exercise 1.30
-**** TODO Exercise 1.31
-**** TODO Exercise 1.32
-**** TODO Exercise 1.33
+#+begin_src scheme :exports both 
+  (define (sum term a next b)
+    (if (> a b)
+        0
+        (+ (term a)
+           (sum term (next a) next b))))
+
+  (define (identity x) x)
+
+  (define (inc x) (+ x 1))
+
+  (define (sum-integers a b)
+    (sum identity a inc b))
+
+  (sum-integers 1 10)
+#+end_src
+
+#+RESULTS:
+: ;=> 55
+
+#+begin_src scheme :exports both 
+  (define (pi-sum a b)
+    (define (pi-term x)
+      (/ 1.0 (* x (+ x 2))))
+    (define (pi-next x)
+      (+ x 4))
+    (sum pi-term a pi-next b))
+
+  (define (calc-pi depth)
+    (* 8 (pi-sum 1 depth)))
+
+  (calc-pi 3500)
+#+end_src
+
+#+RESULTS:
+: ;=> 3.141021225065012
+
+#+begin_src scheme :exports both 
+  (define (integral f a b dx)
+    (define (add-dx x) (+ x dx))
+    (* (sum f (+ a (/ dx 2.0)) add-dx b)
+       dx))
+
+  (define (cube x) (* x x x))
+
+  (integral cube 0 1 0.001)
+#+end_src
+
+#+RESULTS:
+: ;=> 0.249999875000001
+
+**** DONE Exercise 1.29 Simpson's Rule
+- State "DONE"       from "TODO"       [2023-01-14 Sat 12:24]
+#+begin_src scheme :exports both 
+  (define (simpson-integral f a b n)
+    (let* ((h (/ (- b a) n))
+           (y (lambda (k) (f (+ a (* k h)))))
+           (term (lambda (x) (* (y x) (if (even? x) 2 4)))))
+      (* (/ h 3.0) (+ (sum term 1 inc (- n 1)) (y 0) (y n)))))
+  
+  (simpson-integral cube 0 1 100)
+#+end_src
+
+#+RESULTS:
+: ;=> 0.25
+
+Wowza, it's accurate!
+
+**** DONE Exercise 1.30 Iterative Process for Sum
+- State "DONE"       from "TODO"       [2023-01-14 Sat 12:27]
+#+begin_src scheme :exports both 
+  (define (sum term a next b)
+    (define (iter a result)
+      (if (> a b)
+          result
+          (iter (next a) (+ result (term a)))))
+    (iter a 0))
+  
+  (sum identity 1 inc 10)
+#+end_src
+
+#+RESULTS:
+: ;=> 55
+
+**** DONE Exercise 1.31 Product
+- State "DONE"       from "TODO"       [2023-01-14 Sat 12:45]
+#+begin_src scheme :exports both 
+  (define (product term a next b)
+    (if (> a b)
+        1
+        (* (term a) (product term (next a) next b))))
+
+  (define (factorial n)
+    (product identity 1 inc n))
+
+  (factorial 10)
+#+end_src
+
+#+RESULTS:
+: ;=> 3628800
+
+Iterative version:
+
+#+begin_src scheme :exports both 
+  (define (product term a next b)
+    (define (iter a result)
+      (if (> a b)
+          result
+          (iter (next a) (* result (term a)))))
+    (iter a 1))
+
+  (product identity 1 inc 10)
+#+end_src
+
+#+RESULTS:
+: ;=> 3628800
+
+#+begin_src scheme :exports both 
+  (define (pi-apprx n)
+    (define (plus2 x) (+ 2 x))
+    (* 4 (/ (product (lambda (x) (* x (plus2 x))) 2.0 plus2 n)
+            (product (lambda (x) (* x x)) 3.0 plus2 (+ n 1)))))
+  
+  (pi-apprx 100)  
+#+end_src
+
+#+RESULTS:
+: ;=> 3.1570301764551676
+
+However, this can only go to around n=150, after that, I get NaN...
+**** DONE Exercise 1.32 Accumulate
+- State "DONE"       from "TODO"       [2023-01-14 Sat 12:47]
+#+begin_src scheme :exports both 
+  (define (accumulate combiner null-value term a next b)
+    (define (iter a result)
+      (if (> a b)
+          result
+          (iter (next a) (combiner result (term a)))))
+    (iter a null-value))
+
+  (define (sum term a next b) (accumulate + 0 term a next b))
+  (define (product term a next b) (accumulate * 1 term a next b))
+#+end_src
+
+#+RESULTS:
+: ;=> 3628800
+
+**** DONE Exercise 1.33 Accumulate with Filter
+- State "DONE"       from "TODO"       [2023-01-14 Sat 13:00]
+#+begin_src scheme :exports both
+  (define (filtered-accumulate combiner null-value term a next b filter)
+    (define (iter a result)
+      (if (> a b)
+          result
+          (iter (next a)
+                (if (filter a) (combiner result (term a)) result))))
+    (iter a null-value))
+
+  (define (sum-of-squares-of-primes a b)
+    (filtered-accumulate + 0 square a inc b prime?))
+
+  (sum-of-squares-of-primes 1 20)
+#+end_src
+
+#+RESULTS:
+: ;=> 1028
+
+#+begin_src scheme :exports both
+  (define (product-of-relative-primes n)
+    (define (filter x) (= (gcd x n) 1))
+    (filtered-accumulate * 1 identity 1 inc (- n 1) filter))
+
+  (product-of-relative-primes 10)
+#+end_src
+
+#+RESULTS:
+: ;=> 189
+
 *** 1.3.2 Constructing Procedures Using =lambda=
 **** TODO Exercise 1.34
 *** 1.3.3 Procedures as General Methods
