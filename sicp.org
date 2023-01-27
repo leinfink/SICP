@@ -11,7 +11,7 @@
 
 /Attribution:/ Harold Abelson and Gerald Jay Sussman with Julie Sussman, foreword by Alan J. Perlis, ©1996 by The Massachusetts Institute of Technology, licensed under the Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0). Notes, (modified or adjusted) excerpts, and exercises by @leinfink.
 
-* TODO Chapter 1 [67%]
+* TODO Chapter 1 [75%]
 :PROPERTIES:
 :header-args:scheme: :session *sicp1* :post commentify(*this*)
 :COOKIE_DATA: todo recursive
@@ -1120,7 +1120,7 @@ When we use =square=, applicative-order evaluation allows us to calculate =(expm
 #+RESULTS:
 : ;=> #t#f#f
 
-** TODO 1.3 Formulating Abstractions with Higher-Order Procedures [6/18]
+** TODO 1.3 Formulating Abstractions with Higher-Order Procedures [10/18]
   :PROPERTIES:
   :COOKIE_DATA: todo recursive
   :END:
@@ -1270,7 +1270,7 @@ However, this can only go to around n=150, after that, I get NaN...
 #+end_src
 
 #+RESULTS:
-: ;=> 3628800
+: ;=> #<void>
 
 **** DONE Exercise 1.33 Accumulate with Filter
 - State "DONE"       from "TODO"       [2023-01-14 Sat 13:00]
@@ -1319,12 +1319,288 @@ However, this can only go to around n=150, after that, I get NaN...
 
 =(f f)= would call =(f 2)=, which would call =(2 2)=, which is an error, since 2 is not a procedure.
 *** 1.3.3 Procedures as General Methods
+**** Finding Roots of Equations by the Half-Interval Method
+#+begin_src scheme :exports both
+  (define (close-enough? x y)
+    (< (abs (- x y)) 0.001))
+
+  (define (search f neg-point pos-point)
+    (let ((midpoint (average neg-point pos-point)))
+      (if (close-enough? neg-point pos-point)
+          midpoint
+          (let ((test-value (f midpoint)))
+            (cond ((positive? test-value)
+                   (search f neg-point midpoint))
+                  ((negative? test-value)
+                   (search f midpoint pos-point))
+                  (else midpoint))))))
+
+  (define (half-interval-method f a b)
+    (let ((a-value (f a))
+          (b-value (f b)))
+      (cond ((and (negative? a-value)
+                  (positive? b-value))
+             (search f a b))
+            ((and (negative? b-value)
+                  (positive? a-value))
+             (search f b a))
+            (else (error "Values are not of opposite sign" a b)))))
+#+end_src
+
+#+RESULTS:
+: ;=> #<void>
+
+#+begin_src scheme :exports both 
+(half-interval-method sin 2.0 4.0)
+#+end_src
+
+#+RESULTS:
+: ;=> 3.14111328125
+
+#+begin_src scheme :exports both 
+  (half-interval-method
+   (lambda (x) (- (* x x x) (* 2 x) 3))
+   1.0
+   2.0)
+#+end_src
+
+#+RESULTS:
+: ;=> 1.89306640625
+**** Finding Fixed Points of Functions
+#+begin_src scheme :exports both 
+  (define tolerance 0.00001)
+  (define (fixed-point f first-guess)
+    (define (close-enough? v1 v2)
+      (< (abs (- v1 v2)) tolerance))
+    (define (try guess)
+      (let ((next (f guess)))
+        (if (close-enough? guess next)
+            next
+            (try next))))
+    (try first-guess))
+  #+end_src
+
+#+RESULTS:
+: ;=> #<void>
+
+#+begin_src scheme :exports both 
+  (fixed-point cos 1.0)
+#+end_src
+
+#+RESULTS:
+: ;=> 0.7390822985224024
+
+#+begin_src scheme :exports both 
+  (fixed-point (lambda (y) (+ (sin y) (cos y))) 1.0)
+#+end_src
+
+#+RESULTS:
+: ;=> 1.2587315962971173
+
+#+begin_src scheme :exports both 
+  (define (sqrt x)
+    (fixed-point (lambda (y) (average y (/ x y))) 1.0))
+
+  (sqrt 64)
+#+end_src
+
+#+RESULTS:
+: ;=> 8.00000000000017
+
+- average damping :: averaging successive approximations to a solution. can help with the convergence of fixed-point searches
 **** TODO Exercise 1.35
-**** TODO Exercise 1.36
-**** TODO Exercise 1.37
-**** TODO Exercise 1.38
-**** TODO Exercise 1.39
+**** DONE Exercise 1.36
+- State "DONE"       from "TODO"       [2023-01-26 Thu 20:34]
+#+begin_src scheme :exports both :results output
+  (define tolerance 0.00001)
+  (define (fixed-point-loud f first-guess)
+    (define (close-enough? v1 v2)
+      (< (abs (- v1 v2)) tolerance))
+    (define (try guess)
+      (display guess)
+      (newline)
+      (let ((next (f guess)))
+        (if (close-enough? guess next)
+            next
+            (try next))))
+    (try first-guess))
+
+  (fixed-point-loud (lambda (x) (/ (log 1000) (log x))) 2)
+
+  (display "---")
+  (newline)
+
+  (fixed-point-loud (lambda (x) (average x (/ (log 1000) (log x)))) 2)
+  #+end_src
+
+  #+RESULTS:
+  #+begin_example
+  ;=> 2
+  9.965784284662087
+  3.004472209841214
+  6.279195757507157
+  3.759850702401539
+  5.215843784925895
+  4.182207192401397
+  4.8277650983445906
+  4.387593384662677
+  4.671250085763899
+  4.481403616895052
+  4.6053657460929
+  4.5230849678718865
+  4.577114682047341
+  4.541382480151454
+  4.564903245230833
+  4.549372679303342
+  4.559606491913287
+  4.552853875788271
+  4.557305529748263
+  4.554369064436181
+  4.556305311532999
+  4.555028263573554
+  4.555870396702851
+  4.555315001192079
+  4.5556812635433275
+  4.555439715736846
+  4.555599009998291
+  4.555493957531389
+  4.555563237292884
+  4.555517548417651
+  4.555547679306398
+  4.555527808516254
+  4.555540912917957
+  ---
+  2
+  5.9828921423310435
+  4.922168721308343
+  4.628224318195455
+  4.568346513136242
+  4.5577305909237005
+  4.555909809045131
+  4.555599411610624
+  4.5555465521473675
+  #+end_example
+
+**** DONE Exercise 1.37 Continued Fraction
+- State "DONE"       from "TODO"       [2023-01-26 Thu 20:49]
+#+begin_src scheme :exports both 
+  (define (cont-frac n d k)
+    (define (recurse i)
+      (let ((n-val (n i))
+            (d-val (d i)))
+        (if (= i k)
+            (/ n-val d-val)
+            (/ n-val (+ d-val (recurse (inc i)))))))
+    (recurse 1))
+
+  (cont-frac (lambda (i) 1.0)
+             (lambda (i) 1.0)
+             11)
+#+end_src
+
+#+RESULTS:
+: ;=> 0.6180555555555556
+
+With =k=1=, the approximation of the golden ratio is accurate to 4 decimal places.
+
+Version using an iterative process (building up from "inside"):
+
+#+begin_src scheme :exports both 
+    (define (cont-frac-iter n d k)
+      (define (iter acc i)
+        (if (= i 0)
+            acc
+            (iter (/ (n i) (+ (d i) acc))
+                  (- i 1))))
+      (iter 0 k))
+
+    (cont-frac-iter (lambda (i) 1.0)
+                    (lambda (i) 1.0)
+                    11)
+#+end_src
+
+#+RESULTS:
+: ;=> 0.6180555555555556
+
+**** DONE Exercise 1.38 Euler's expansion
+- State "DONE"       from "TODO"       [2023-01-27 Fri 14:38]
+#+begin_src scheme :exports both
+    (define (apprx-e)
+      (+ 2 (cont-frac (lambda (i) 1.0)
+                      (lambda (i)
+                        (if (= (mod (- i 2) 3) 0)
+                            (* 2.0 (+ 1 (quotient i 3)))
+                            1.0))
+                      9)))
+
+    (apprx-e)
+  #+end_src
+
+#+RESULTS:
+: ;=> 2.718283582089552
+
+**** DONE Exercise 1.39 The Tangent Function
+- State "DONE"       from "TODO"       [2023-01-27 Fri 14:47]
+#+begin_src scheme :exports both 
+  (define (tan-cf x k)
+    (define (recurse i)
+      (if (= i k)
+          0
+          (/ (* x x)
+             (- (- (* 2 i) 1)
+                (recurse (+ i 1))))))
+    (/ x (- 1 (recurse 2))))
+
+  (tan-cf 1.0 6)
+#+end_src
+
+#+RESULTS:
+: ;=> 1.5574074074074076
+
 *** 1.3.4 Procedures as Returned Values
+#+begin_src scheme :exports both 
+  (define (average-damp f)
+    (lambda (x) (average x (f x))))
+#+end_src
+
+#+RESULTS:
+: ;=> #<void>
+
+This returns a procedure. We can use this in a combination whose operator is itself a combination (which returns a procedure):
+
+#+begin_src scheme :exports both 
+  ((average-damp square) 10)
+#+end_src
+
+#+RESULTS:
+: ;=> 55
+
+#+begin_src scheme :exports both 
+  (define (sqrt x)
+    (fixed-point (average-damp (lambda (y) (/ x y)))
+                 1.0))
+
+  (sqrt 81)
+#+end_src
+
+#+RESULTS:
+: ;=> 9.0
+
+In this version, all three elements are made explicit and thus clearer: fixed-point search, average damping, and the specific function (=y -> x/y=). This can now really easily be generalized, for example to cube roots (which just need a slightly different function):
+
+#+begin_src scheme :exports both 
+  (define (cube-root x)
+    (fixed-point (average-damp (lambda (y) (/ x (square y))))
+                 1.0))
+
+  (cube-root 343)
+#+end_src
+
+#+RESULTS:
+: ;=> 6.99999750595221
+
+**** Newton's method
+
 **** TODO Exercise 1.40
 **** TODO Exercise 1.41
 **** TODO Exercise 1.42
