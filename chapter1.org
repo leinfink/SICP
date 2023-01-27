@@ -1812,8 +1812,3 @@ Using the =compose= procedure:
 
 #+RESULTS:
 : ;=> 8.000001655289593
-
-* Chapter 2
-* Chapter 3
-* Chapter 4
-* Chapter 5

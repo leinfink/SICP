@@ -1,0 +1,19 @@
+#+TITLE: Structure and Interpretation of Computer Programs
+#+STARTUP: nohideblocks
+
+#+name: commentify
+#+begin_src emacs-lisp :var result="" :exports none
+(concat ";=> " (format "%s" result))
+#+end_src
+
+#+RESULTS: commentify
+: ;=> 
+
+/Attribution:/ Harold Abelson and Gerald Jay Sussman with Julie Sussman, foreword by Alan J. Perlis, ©1996 by The Massachusetts Institute of Technology, licensed under the Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0). Notes, (modified or adjusted) excerpts, and exercises by @leinfink.
+
+* TODO Chapter 2 [100%]
+:PROPERTIES:
+:header-args:scheme: :session sicp2 :post commentify(this)
+:COOKIE_DATA: todo recursive
+:END:
+
