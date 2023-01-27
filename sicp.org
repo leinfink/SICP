@@ -11,7 +11,7 @@
 
 /Attribution:/ Harold Abelson and Gerald Jay Sussman with Julie Sussman, foreword by Alan J. Perlis, ©1996 by The Massachusetts Institute of Technology, licensed under the Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0). Notes, (modified or adjusted) excerpts, and exercises by @leinfink.
 
-* TODO Chapter 1 [75%]
+* TODO Chapter 1 [89%]
 :PROPERTIES:
 :header-args:scheme: :session *sicp1* :post commentify(*this*)
 :COOKIE_DATA: todo recursive
@@ -1120,7 +1120,7 @@ When we use =square=, applicative-order evaluation allows us to calculate =(expm
 #+RESULTS:
 : ;=> #t#f#f
 
-** TODO 1.3 Formulating Abstractions with Higher-Order Procedures [10/18]
+** TODO 1.3 Formulating Abstractions with Higher-Order Procedures [17/18]
   :PROPERTIES:
   :COOKIE_DATA: todo recursive
   :END:
@@ -1600,14 +1600,219 @@ In this version, all three elements are made explicit and thus clearer: fixed-po
 : ;=> 6.99999750595221
 
 **** Newton's method
+#+begin_src scheme :exports both
+  (define dx 0.00001)
 
-**** TODO Exercise 1.40
-**** TODO Exercise 1.41
-**** TODO Exercise 1.42
-**** TODO Exercise 1.43
-**** TODO Exercise 1.44
-**** TODO Exercise 1.45
-**** TODO Exercise 1.46
+  (define (deriv g)
+    (lambda (x) (/ (- (g (+ x dx)) (g x)) dx)))
+
+  (define (cube x) (* x x x))
+  ((deriv cube) 5)
+#+end_src
+
+#+RESULTS:
+: ;=> 75.00014999664018
+
+
+#+begin_src scheme :exports both 
+  (define (newton-transform g)
+    (lambda (x) (- x (/ (g x) ((deriv g) x)))))
+
+  (define (newtons-method g guess)
+    (fixed-point (newton-transform g) guess))
+
+  (define (sqrt x)
+    (newtons-method (lambda (y) (- (square y) x)) 1.0))
+
+  (sqrt 81)
+#+end_src
+
+#+RESULTS:
+: ;=> 9.0
+
+****  Abstractions and first-class procedures
+#+begin_src scheme :exports both 
+  (define (fixed-point-of-transform g transform guess)
+    (fixed-point (transform g) guess))
+
+  (define (sqrt x)
+    (fixed-point-of-transform
+     (lambda (y) (/ x y)) average-damp 1.0))
+
+  (define (sqrt x)
+    (fixed-point-of-transform
+     (lambda (y) (- (square y) x)) newton-transform 1.0))
+#+end_src
+
+#+RESULTS:
+: ;=> #<void>
+
+Computational elements with the fewest restrictions on how they can be manipulated have /first-class/ status (coined by Chistropher Strachey).
+
+- they may be named by variables
+- they may be passed as arguments to procedures
+- they may be returned as the results of procedures
+- they may be included in data structures
+
+  Lisp procedures have first-class status.
+**** DONE Exercise 1.40
+- State "DONE"       from "TODO"       [2023-01-27 Fri 22:03]
+#+begin_src scheme :exports both 
+  (define (cubic a b c)
+    (lambda (x)
+      (+ (* x x x)
+         (* a x x)
+         (* b x)
+         c)))
+
+  (newtons-method (cubic 2 3 1) 1)
+    #+end_src
+
+#+RESULTS:
+: ;=> -0.4301597090015873
+
+**** DONE Exercise 1.41
+- State "DONE"       from "TODO"       [2023-01-27 Fri 22:06]
+#+begin_src scheme :exports both 
+  (define (double f)
+    (lambda (x) (f (f x))))
+
+  ((double inc) 1)
+#+end_src
+
+#+RESULTS:
+: ;=> 3
+
+#+begin_src scheme :exports both 
+  (((double (double double)) inc) 5)
+#+end_src
+
+#+RESULTS:
+: ;=> 21
+
+**** DONE Exercise 1.42 Composition
+- State "DONE"       from "TODO"       [2023-01-27 Fri 22:09]
+#+begin_src scheme :exports both 
+  (define (compose f g)
+    (lambda (x) (f (g x))))
+
+  ((compose square inc) 6)
+#+end_src
+
+#+RESULTS:
+: ;=> 49
+
+**** DONE Exercise 1.43
+- State "DONE"       from "TODO"       [2023-01-27 Fri 22:20]
+#+begin_src scheme :exports both 
+  (define (repeated f n)
+    (lambda (x)
+      (define (repeat i)
+        (if (= i n)
+            (f x)
+            (f (repeat (inc i)))))
+      (repeat 1)))
+
+  ((repeated square 2) 5)
+#+end_src
+
+#+RESULTS:
+: ;=> 625
+
+Using the =compose= procedure:
+
+#+begin_src scheme :exports both 
+  (define (repeated f n)
+    (if (= n 1)
+        (lambda (x) (f x))
+        (compose f (repeated f (- n 1)))))
+
+  ((repeated square 2) 5)
+#+end_src
+
+#+RESULTS:
+: ;=> 625
+
+**** DONE Exercise 1.44
+- State "DONE"       from "TODO"       [2023-01-27 Fri 22:29]
+#+begin_src scheme :exports both 
+  (define (smooth f)
+    (let ((dx 0.0001))
+      (lambda (x) (/ (+ (f (- x dx)) (f x) (f (+ x dx)))
+                     3))))
+
+  (define (n-fold-smooth f n)
+    ((repeated smooth n) f))
+
+  ((n-fold-smooth sqrt 10) 64)
+#+end_src
+
+#+RESULTS:
+: ;=> 7.9999999999849365
+
+**** DONE Exercise 1.45
+- State "DONE"       from "TODO"       [2023-01-27 Fri 22:47]
+#+begin_src scheme :exports both
+  (define (nth-root n x)
+    (fixed-point
+     ((repeated average-damp (inexact->exact (floor (log n))))
+      (lambda (y) (/ x (expt y (- n 1)))))
+     1.0))
+
+  (nth-root 32 2390)
+#+end_src
+
+#+RESULTS:
+: ;=> 1.2751953576675212
+
+**** DONE Exercise 1.46
+- State "DONE"       from "TODO"       [2023-01-27 Fri 23:03]
+#+begin_src scheme :exports both 
+  (define (iterative-improve good-enough improve)
+    (lambda (guess)
+      (define (repeat guess)
+        (if (good-enough guess)
+            guess
+            (repeat (improve guess))))
+      (repeat guess)))
+#+end_src
+
+#+RESULTS:
+: ;=> #<void>
+
+#+begin_src scheme :exports both
+  (define (sqrt x)
+    ((iterative-improve
+      (lambda (guess) (< (abs (- (square guess) x)) 0.001))
+      (lambda (guess) (average guess (/ x guess))))
+    1.0))
+
+  (sqrt 256)
+#+end_src
+
+#+RESULTS:
+: ;=> 16.00000352670594
+
+#+begin_src scheme :exports both 
+  (define (fixed-point f first-guess)
+    ((iterative-improve
+      (lambda (x) (< (abs (- x (f x))) 0.00001))
+      (lambda (x) (f x)))
+     first-guess))
+
+  (fixed-point cos 1.0)
+#+end_src
+
+#+RESULTS:
+: ;=> 0.7390893414033927
+
+#+begin_src scheme :exports both 
+  (fixed-point (lambda (y) (average y (/ 64 y))) 1.0)
+#+end_src
+
+#+RESULTS:
+: ;=> 8.000001655289593
+
 * Chapter 2
 * Chapter 3
 * Chapter 4
