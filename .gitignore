@@ -1,3 +1,5 @@
 *.pdf
 *.info
 /ltximg/
+*.epub
+*.org_archive
