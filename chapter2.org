@@ -11,19 +11,138 @@
 
 /Attribution:/ Harold Abelson and Gerald Jay Sussman with Julie Sussman, foreword by Alan J. Perlis, ©1996 by The Massachusetts Institute of Technology, licensed under the Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0). Notes, (modified or adjusted) excerpts, and exercises by @leinfink.
 
-* TODO Chapter 2 [0%]
+* TODO Chapter 2 [89%]
 :PROPERTIES:
-:header-args:scheme: :session sicp2 :post commentify(this)
+:header-args:scheme: :session *sicp2* :post commentify(*this*)
 :COOKIE_DATA: todo recursive
 :END:
+  - another key aspect of a programming language is the means it provides for building abstractions by combining data objects to form /compound data/
+  - compound data allows for /data abstractions/ (isolating the representation of data objects from their use --> /abstraction barriers/)
+  - a programming language should provide some kind of "glue" to combine data objects into more complex data objects
+    - one way of doing this is simply using procedures (blurring the distinction between procedures and data)
+    - /closure/
+    - /conventional interfaces/
+  - /symbolic expressions/ :: data whose elementary parts can be arbitraty symbols rather than only numbers
+  - /generic operations/
+  - /data-directed programming/
 ** 2.1 Introduction to Data Abstraction [0/16]
   :PROPERTIES:
   :COOKIE_DATA: todo recursive
   :END:
+- data abstraction :: enables us to isolate the use of a compound data object from the details of how it is constructed
+  
 *** 2.1.1 Example: Arithmetic Operations for Rational Numbers
 **** Pairs
 **** Representing rational numbers
+
+#+begin_src scheme :exports both 
+  (define (make-rat n d) (cons n d))
+  (define (numer x) (car x))
+  (define (denom x) (cdr x))
+
+  (define (print-rat x)
+    (newline)
+    (display (numer x))
+    (display "/")
+    (display (denom x)))
+#+end_src
+
+#+RESULTS:
+: ;=> #<void>
+
+#+begin_src scheme :exports both 
+(define (add-rat x y)
+  (make-rat (+ (* (numer x) (denom y))
+               (* (numer y) (denom x)))
+            (* (denom x) (denom y))))
+
+(define (sub-rat x y)
+  (make-rat (- (* (numer x) (denom y))
+               (* (numer y) (denom x)))
+            (* (denom x) (denom y))))
+
+(define (mul-rat x y)
+  (make-rat (* (numer x) (numer y))
+            (* (denom x) (denom y))))
+
+(define (div-rat x y)
+  (make-rat (* (numer x) (denom y))
+            (* (denom x) (numer y))))
+
+(define (equal-rat? x y)
+  (= (* (numer x) (denom y))
+     (* (numer y) (denom x))))
+#+end_src
+
+#+RESULTS:
+: ;=> #<void>
+
+#+begin_src scheme :exports both :results output
+  (define one-half (make-rat 1 2))
+  (print-rat one-half)
+
+  (define one-third (make-rat 1 3))
+  (print-rat
+   (add-rat one-half one-third))
+
+  (print-rat
+   (mul-rat one-half one-third))
+
+  (print-rat
+   (add-rat one-third one-third))
+#+end_src
+
+#+RESULTS:
+: ;=> 
+: 1/2
+: 5/6
+: 1/6
+: 6/9
+
+
+#+begin_src scheme :exports both :results output
+    (define (gcd a b)
+      (if (= b 0)
+	  a
+	  (gcd b (remainder a b))))
+
+  (define (make-rat n d)
+    (let ((g (gcd n d)))
+      (cons (/ n g) 
+	    (/ d g))))
+  
+  (print-rat
+   (add-rat one-third one-third))
+
+#+end_src
+
+#+RESULTS:
+: ;=> 
+: 2/3
+
 **** TODO Exercise 2.1
+#+begin_src scheme :exports both :results output
+  (define (make-rat n d)
+    (define (normalize n d)
+      (cond ((and (> 0 n) (> 0 d)) (cons (- 0 n)
+					 (- 0 d)))
+	    ((> 0 n) (cons n d))
+	    ((> 0 d) (cons (- 0 n) (- 0 d)))
+	    (else (cons n d))))
+    (let* ((normalized (normalize n d))
+	   (n (car normalized))
+	   (d (cdr normalized))
+	   (g (gcd n d)))
+      (cons (/ n g) 
+	    (/ d g))))
+
+  (print-rat (make-rat 3 -4))
+#+end_src
+
+#+RESULTS:
+: ;=> 
+: -3/4
+
 *** 2.1.2 Abstraction Barriers
 **** TODO Exercise 2.2
 **** TODO Exercise 2.3
