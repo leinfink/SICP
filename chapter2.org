@@ -124,11 +124,9 @@
 #+begin_src scheme :exports both :results output
   (define (make-rat n d)
     (define (normalize n d)
-      (cond ((and (> 0 n) (> 0 d)) (cons (- 0 n)
-					 (- 0 d)))
-	    ((> 0 n) (cons n d))
-	    ((> 0 d) (cons (- 0 n) (- 0 d)))
-	    (else (cons n d))))
+      (if (> 0 d)
+	  (cons (- 0 n) (- 0 d))
+	  (cons n d)))
     (let* ((normalized (normalize n d))
 	   (n (car normalized))
 	   (d (cdr normalized))
@@ -136,11 +134,17 @@
       (cons (/ n g) 
 	    (/ d g))))
 
+  (print-rat (make-rat 3 4))
+  (print-rat (make-rat -3 -4))
+  (print-rat (make-rat -3 4))
   (print-rat (make-rat 3 -4))
 #+end_src
 
 #+RESULTS:
 : ;=> 
+: 3/4
+: 3/4
+: -3/4
 : -3/4
 
 *** 2.1.2 Abstraction Barriers
